@@ -1,4 +1,4 @@
-# 🖥️ SysWatch — Real-Time System Monitoring
+# 🖥️ Carbonpulse — Real-Time System Monitoring
 
 A lightweight, multi-client system monitoring suite for Windows. A central server collects live CPU, RAM, GPU, power, carbon emission, and process data from remote clients and displays everything through a sleek web dashboard. A separate client-side dashboard lets each monitored machine view its own stats and communicate with the server.
 
