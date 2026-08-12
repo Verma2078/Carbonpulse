@@ -4,514 +4,1202 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carbonpulse — Client View</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&display=swap"
+  rel="stylesheet"
+>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#080a0e;--panel:#0e1118;--panel2:#131720;--border:#1e2535;--border2:#2a3347;
-  --text:#b8c4d8;--dim:#4a5568;--bright:#e2e8f4;
-  --green:#39d98a;--yellow:#f5c542;--red:#ff4d4d;
-  --blue:#4d9eff;--cyan:#00d4ff;--purple:#9b7fff;--orange:#ff8c42;
-  --mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
-}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px)}
 
-/* ── ROOT LAYOUT ── */
-#root{display:grid;grid-template-rows:48px 1fr;height:100vh}
+  /* ══════════════════════════════════════════════════════════════════
+     RESET & GLOBAL VARIABLES
+     ══════════════════════════════════════════════════════════════════ */
 
-/* ── TOP BAR ── */
-#topbar{display:flex;align-items:center;padding:0 18px;gap:16px;
-  background:var(--panel);border-bottom:1px solid var(--border);z-index:10}
-.logo{font-family:var(--mono);font-size:14px;color:var(--orange);letter-spacing:3px;white-space:nowrap}
-.logo em{color:var(--dim);font-style:normal}
-.logo span{color:var(--cyan);font-size:11px;margin-left:8px;letter-spacing:1px}
-.sep{width:1px;height:18px;background:var(--border2);flex-shrink:0}
-.tb-stat{display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono)}
-.tb-lbl{color:var(--dim)}
-.tb-val{color:var(--bright)}
-.tb-val.g{color:var(--green)}.tb-val.y{color:var(--yellow)}.tb-val.r{color:var(--red)}.tb-val.b{color:var(--blue)}
-.spacer{flex:1}
-.ws-pill{font-size:10px;font-family:var(--mono);padding:3px 9px;border-radius:2px;
-  border:1px solid var(--border2);color:var(--dim);transition:all .3s}
-.ws-pill.on{color:var(--green);border-color:var(--green);text-shadow:0 0 8px var(--green)}
-.ws-pill.off{color:var(--red);border-color:var(--red)}
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-/* ── MAIN GRID ── */
-#main{display:grid;grid-template-columns:1fr 290px;overflow:hidden}
+  :root {
+    /* backgrounds */
+    --bg: #080a0e;
+    --panel: #0e1118;
+    --panel2: #131720;
 
-/* ── GENERIC PANEL ── */
-.panel{background:var(--panel);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.ph{padding:9px 13px;border-bottom:1px solid var(--border);font-family:var(--mono);
-  font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;
-  flex-shrink:0;display:flex;align-items:center;gap:7px}
-.ph .dot{width:6px;height:6px;border-radius:50%}
-.ph .badge{margin-left:auto;color:var(--bright);background:var(--panel2);
-  padding:1px 6px;border-radius:2px;font-size:10px}
+    /* borders */
+    --border: #1e2535;
+    --border2: #2a3347;
 
-/* ── CENTER ── */
-#center{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+    /* text */
+    --text: #b8c4d8;
+    --dim: #4a5568;
+    --bright: #e2e8f4;
 
-/* gauges row */
-#gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
-  background:var(--border);flex-shrink:0;border-bottom:1px solid var(--border)}
-.gc{background:var(--panel);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.gc-lbl{font-size:9px;font-family:var(--mono);letter-spacing:2px;color:var(--dim);text-transform:uppercase}
-.ring{position:relative;width:62px;height:62px}
-.ring svg{transform:rotate(-90deg)}
-.ring .tr{fill:none;stroke:var(--border2);stroke-width:5}
-.ring .fi{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
-.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--bright)}
-.gc-sub{font-size:9px;font-family:var(--mono);color:var(--dim)}
+    /* status colors */
+    --green: #39d98a;
+    --yellow: #f5c542;
+    --red: #ff4d4d;
 
-/* process table */
-#proc-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column}
-#proc-scroll{flex:1;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
-thead th{position:sticky;top:0;background:var(--panel2);padding:7px 12px;
-  text-align:left;font-size:9px;letter-spacing:1.5px;color:var(--dim);
-  border-bottom:1px solid var(--border);font-weight:600}
-tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-tbody tr:hover{background:var(--panel2)}
-tbody td{padding:5px 12px}
-td.pid{color:var(--cyan)}
-td.pname{color:var(--text)}
-td.pstat{font-size:10px}
-.empty{padding:24px;text-align:center;color:var(--dim);font-family:var(--mono);font-size:11px}
+    /* accent colors */
+    --blue: #4d9eff;
+    --cyan: #00d4ff;
+    --purple: #9b7fff;
+    --orange: #ff8c42;
 
-/* search bar */
-#proc-search{width:100%;background:var(--panel2);border:none;border-bottom:1px solid var(--border);
-  color:var(--bright);font-family:var(--mono);font-size:11px;padding:7px 12px;outline:none}
-#proc-search::placeholder{color:var(--dim)}
-#proc-search:focus{border-bottom-color:var(--cyan)}
+    /* fonts */
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+  }
 
-/* ── RIGHT PANEL ── */
-#right{display:flex;flex-direction:column;overflow:hidden}
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow: hidden;
+  }
 
-/* messages from server */
-#msgs{flex:1;display:flex;flex-direction:column;min-height:0}
-#msg-log{flex:1;overflow-y:auto;padding:8px 11px;display:flex;flex-direction:column;gap:2px}
-.cm{font-size:11px;line-height:1.55;animation:fi .18s ease}
-.cm-from{font-family:var(--mono);font-weight:700}
-.cm-time{font-family:var(--mono);font-size:9px;color:var(--dim);margin-left:5px}
-.cm-text{color:var(--text)}
-.cm-priv{color:var(--purple)}
-.csys{text-align:center;font-family:var(--mono);font-size:10px;color:var(--dim);
-  padding:3px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:2px 0}
-.msg-toolbar{padding:8px 10px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:6px}
-#msg-input{flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:3px;
-  color:var(--bright);font-family:var(--mono);font-size:11px;padding:7px 9px;outline:none}
-#msg-input:focus{border-color:var(--cyan)}
-#msg-input::placeholder{color:var(--dim)}
-#msg-send{background:var(--cyan);border:none;color:#000;font-family:var(--mono);
-  font-size:10px;font-weight:700;padding:0 11px;border-radius:3px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
-#msg-send:hover{opacity:.8}
+  /* subtle scanline overlay across the whole viewport */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent, transparent 2px,
+      rgba(0, 0, 0, .05) 2px, rgba(0, 0, 0, .05) 4px
+    );
+  }
 
-/* hardware */
-#hw{height:200px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(--border)}
-#hw-scroll{flex:1;overflow-y:auto;padding:5px 10px}
-.hw-sec{font-size:9px;letter-spacing:2px;color:var(--orange);padding:5px 0 2px;text-transform:uppercase}
-.hw-row{display:flex;gap:5px;font-family:var(--mono);font-size:10px;
-  padding:2px 0;border-bottom:1px solid var(--border)}
-.hw-k{color:var(--dim);min-width:120px;flex-shrink:0}
-.hw-v{color:var(--bright);word-break:break-all}
+  /* ══════════════════════════════════════════════════════════════════
+     ROOT LAYOUT
+     ══════════════════════════════════════════════════════════════════ */
 
-/* stats footer */
-#stats-bar{display:flex;flex-shrink:0;border-top:1px solid var(--border);background:var(--panel)}
-.sc{flex:1;padding:7px 11px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:1px}
-.sc:last-child{border-right:none}
-.sc-lbl{font-size:9px;font-family:var(--mono);letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
-.sc-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--yellow)}
+  #root {
+    display: grid;
+    grid-template-rows: 48px 1fr;
+    height: 100vh;
+  }
 
-/* CID setup overlay */
-#setup{position:fixed;inset:0;background:rgba(8,10,14,.95);display:flex;
-  align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px}
-#setup h2{font-family:var(--mono);color:var(--cyan);font-size:18px;letter-spacing:4px}
-#setup p{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;max-width:340px;line-height:1.7}
-.setup-row{display:flex;gap:8px}
-#cid-input{background:var(--panel2);border:1px solid var(--border2);color:var(--bright);
-  font-family:var(--mono);font-size:14px;padding:8px 14px;border-radius:3px;outline:none;width:120px;text-align:center}
-#cid-input:focus{border-color:var(--cyan)}
-#cid-btn{background:var(--cyan);border:none;color:#000;font-family:var(--mono);
-  font-size:11px;font-weight:700;padding:0 18px;border-radius:3px;cursor:pointer}
-#setup-ws{background:var(--panel2);border:1px solid var(--border2);color:var(--bright);
-  font-family:var(--mono);font-size:11px;padding:7px 12px;border-radius:3px;outline:none;width:260px;text-align:center}
-#setup-ws:focus{border-color:var(--cyan)}
+  /* ══════════════════════════════════════════════════════════════════
+     TOP BAR
+     ══════════════════════════════════════════════════════════════════ */
 
-/* scrollbars */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+  #topbar {
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
 
-@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--orange);
+    letter-spacing: 3px;
+    white-space: nowrap;
+  }
+  .logo em {
+    color: var(--dim);
+    font-style: normal;
+  }
+  .logo span {
+    color: var(--cyan);
+    font-size: 11px;
+    margin-left: 8px;
+    letter-spacing: 1px;
+  }
+
+  .sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border2);
+    flex-shrink: 0;
+  }
+
+  .tb-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+  .tb-lbl { color: var(--dim); }
+  .tb-val { color: var(--bright); }
+  .tb-val.g { color: var(--green); }
+  .tb-val.y { color: var(--yellow); }
+  .tb-val.r { color: var(--red); }
+  .tb-val.b { color: var(--blue); }
+
+  .spacer { flex: 1; }
+
+  .ws-pill {
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 3px 9px;
+    border-radius: 2px;
+    border: 1px solid var(--border2);
+    color: var(--dim);
+    transition: all .3s;
+  }
+  .ws-pill.on {
+    color: var(--green);
+    border-color: var(--green);
+    text-shadow: 0 0 8px var(--green);
+  }
+  .ws-pill.off {
+    color: var(--red);
+    border-color: var(--red);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     MAIN GRID (center content + right sidebar)
+     ══════════════════════════════════════════════════════════════════ */
+
+  #main {
+    display: grid;
+    grid-template-columns: 1fr 290px;
+    overflow: hidden;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     GENERIC PANEL (shared by process table, messages, hardware, etc.)
+     ══════════════════════════════════════════════════════════════════ */
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* panel header */
+  .ph {
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .ph .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .ph .badge {
+    margin-left: auto;
+    color: var(--bright);
+    background: var(--panel2);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 10px;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     CENTER COLUMN
+     ══════════════════════════════════════════════════════════════════ */
+
+  #center {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+  }
+
+  /* -- gauges row -- */
+  #gauges {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .gc {
+    background: var(--panel);
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .gc-lbl {
+    font-size: 9px;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .gc-sub {
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--dim);
+  }
+
+  .ring {
+    position: relative;
+    width: 62px;
+    height: 62px;
+  }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .tr {
+    fill: none;
+    stroke: var(--border2);
+    stroke-width: 5;
+  }
+  .ring .fi {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .6s ease;
+  }
+  .ring-val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--bright);
+  }
+
+  /* -- process table -- */
+  #proc-wrap {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  #proc-scroll {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: var(--panel2);
+    padding: 7px 12px;
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  tbody tr:hover { background: var(--panel2); }
+  tbody td { padding: 5px 12px; }
+
+  td.pid { color: var(--cyan); }
+  td.pname { color: var(--text); }
+  td.pstat { font-size: 10px; }
+
+  .empty {
+    padding: 24px;
+    text-align: center;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  /* -- process search bar -- */
+  #proc-search {
+    width: 100%;
+    background: var(--panel2);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--bright);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 12px;
+    outline: none;
+  }
+  #proc-search::placeholder { color: var(--dim); }
+  #proc-search:focus { border-bottom-color: var(--cyan); }
+
+  /* ══════════════════════════════════════════════════════════════════
+     RIGHT SIDEBAR
+     ══════════════════════════════════════════════════════════════════ */
+
+  #right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* -- server messages -- */
+  #msgs {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #msg-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cm {
+    font-size: 11px;
+    line-height: 1.55;
+    animation: fadeIn .18s ease;
+  }
+  .cm-from { font-family: var(--mono); font-weight: 700; }
+  .cm-time {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--dim);
+    margin-left: 5px;
+  }
+  .cm-text { color: var(--text); }
+  .cm-priv { color: var(--purple); }
+
+  .csys {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    padding: 3px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 2px 0;
+  }
+
+  .msg-toolbar {
+    padding: 8px 10px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+  }
+  #msg-input {
+    flex: 1;
+    background: var(--panel2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    color: var(--bright);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 9px;
+    outline: none;
+  }
+  #msg-input:focus { border-color: var(--cyan); }
+  #msg-input::placeholder { color: var(--dim); }
+
+  #msg-send {
+    background: var(--cyan);
+    border: none;
+    color: #000;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 0 11px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: opacity .2s;
+    white-space: nowrap;
+  }
+  #msg-send:hover { opacity: .8; }
+
+  /* -- hardware panel -- */
+  #hw {
+    height: 200px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+  }
+  #hw-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px 10px;
+  }
+  .hw-sec {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--orange);
+    padding: 5px 0 2px;
+    text-transform: uppercase;
+  }
+  .hw-row {
+    display: flex;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .hw-k {
+    color: var(--dim);
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+  .hw-v {
+    color: var(--bright);
+    word-break: break-all;
+  }
+
+  /* -- stats footer -- */
+  #stats-bar {
+    display: flex;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .sc {
+    flex: 1;
+    padding: 7px 11px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .sc:last-child { border-right: none; }
+  .sc-lbl {
+    font-size: 9px;
+    font-family: var(--mono);
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .sc-val {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     CID / CONNECTION SETUP OVERLAY
+     ══════════════════════════════════════════════════════════════════ */
+
+  #setup {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 10, 14, .95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #setup h2 {
+    font-family: var(--mono);
+    color: var(--cyan);
+    font-size: 18px;
+    letter-spacing: 4px;
+  }
+  #setup p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    text-align: center;
+    max-width: 340px;
+    line-height: 1.7;
+  }
+
+  .setup-row {
+    display: flex;
+    gap: 8px;
+  }
+  #cid-input {
+    background: var(--panel2);
+    border: 1px solid var(--border2);
+    color: var(--bright);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    outline: none;
+    width: 120px;
+    text-align: center;
+  }
+  #cid-input:focus { border-color: var(--cyan); }
+
+  #cid-btn {
+    background: var(--cyan);
+    border: none;
+    color: #000;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 18px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  #setup-ws {
+    background: var(--panel2);
+    border: 1px solid var(--border2);
+    color: var(--bright);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 12px;
+    border-radius: 3px;
+    outline: none;
+    width: 260px;
+    text-align: center;
+  }
+  #setup-ws:focus { border-color: var(--cyan); }
+
+  /* ══════════════════════════════════════════════════════════════════
+     SCROLLBARS
+     ══════════════════════════════════════════════════════════════════ */
+
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border2);
+    border-radius: 2px;
+  }
+  * { scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     ANIMATIONS
+     ══════════════════════════════════════════════════════════════════ */
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: none; }
+  }
+
 </style>
 </head>
 <body>
 
-<!-- SETUP OVERLAY -->
-<div id="setup">
-  <h2>CLIENT DASHBOARD</h2>
-  <p>Enter the WebSocket server address and your Client ID.<br>
-     Your CID is shown in the server dashboard when you connect.</p>
-  <input id="setup-ws" value="ws://127.0.0.1:9999" placeholder="ws://SERVER_IP:9999" />
-  <div class="setup-row">
-    <input id="cid-input" type="number" min="1" placeholder="CID" />
-    <button id="cid-btn">CONNECT</button>
-  </div>
-</div>
-
-<div id="root">
-
-  <!-- TOP BAR -->
-  <div id="topbar">
-    <div class="logo">Carbonpulse <span>CLIENT VIEW</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">MY CID</span><span class="tb-val b" id="tb-cid">—</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">CPU</span><span class="tb-val g" id="tb-cpu">0%</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">RAM</span><span class="tb-val" id="tb-ram">0%</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">GPU</span><span class="tb-val y" id="tb-gpu">0%</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">POWER</span><span class="tb-val y" id="tb-pwr">0 W</span></div>
-    <div class="sep"></div>
-    <div class="tb-stat"><span class="tb-lbl">TIME</span><span class="tb-val" id="tb-tm">--:--:--</span></div>
-    <div class="spacer"></div>
-    <div class="ws-pill off" id="ws-pill">● DISCONNECTED</div>
+  <!-- ══════════════════════════════════════════════════════════════════
+       SETUP OVERLAY — shown until the user enters a CID + WS address
+       ══════════════════════════════════════════════════════════════════ -->
+  <div id="setup">
+    <h2>CLIENT DASHBOARD</h2>
+    <p>
+      Enter the WebSocket server address and your Client ID.<br>
+      Your CID is shown in the server dashboard when you connect.
+    </p>
+    <input id="setup-ws" value="ws://127.0.0.1:9999" placeholder="ws://SERVER_IP:9999">
+    <div class="setup-row">
+      <input id="cid-input" type="number" min="1" placeholder="CID">
+      <button id="cid-btn">CONNECT</button>
+    </div>
   </div>
 
-  <!-- MAIN -->
-  <div id="main">
+  <div id="root">
 
-    <!-- CENTER: GAUGES + PROCESS TABLE -->
-    <div id="center">
+    <!-- ════════════════════════════════════════════════════════════════
+         TOP BAR
+         ════════════════════════════════════════════════════════════════ -->
+    <div id="topbar">
+      <div class="logo">Carbonpulse <span>CLIENT VIEW</span></div>
+      <div class="sep"></div>
 
-      <!-- GAUGES -->
-      <div id="gauges">
-        <div class="gc"><div class="gc-lbl">CPU</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-cpu" cx="31" cy="31" r="26" stroke="var(--blue)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-cpu">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">RAM</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-ram" cx="31" cy="31" r="26" stroke="var(--purple)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-ram">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">GPU</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-gpu" cx="31" cy="31" r="26" stroke="var(--orange)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-gpu">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">POWER</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-pwr" cx="31" cy="31" r="26" stroke="var(--yellow)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-pwr">0W</div></div>
-          <div class="gc-sub">max 200W</div></div>
-        <div class="gc"><div class="gc-lbl">CO₂/s</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-co2" style="font-size:9px">0g</div></div>
-          <div class="gc-sub">per sec</div></div>
+      <div class="tb-stat">
+        <span class="tb-lbl">MY CID</span>
+        <span class="tb-val b" id="tb-cid">—</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="tb-stat">
+        <span class="tb-lbl">CPU</span>
+        <span class="tb-val g" id="tb-cpu">0%</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="tb-stat">
+        <span class="tb-lbl">RAM</span>
+        <span class="tb-val" id="tb-ram">0%</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="tb-stat">
+        <span class="tb-lbl">GPU</span>
+        <span class="tb-val y" id="tb-gpu">0%</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="tb-stat">
+        <span class="tb-lbl">POWER</span>
+        <span class="tb-val y" id="tb-pwr">0 W</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="tb-stat">
+        <span class="tb-lbl">TIME</span>
+        <span class="tb-val" id="tb-tm">--:--:--</span>
       </div>
 
-      <!-- PROCESS TABLE -->
-      <div id="proc-wrap" class="panel" style="border:none;border-top:1px solid var(--border)">
-        <div class="ph">
-          <span class="dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></span>
-          MY PROCESSES
-          <span class="badge" id="proc-cnt">0</span>
-        </div>
-        <input id="proc-search" placeholder="Filter processes…" />
-        <div id="proc-scroll">
-          <div class="empty" id="proc-empty">Waiting for data…</div>
-          <table id="proc-tbl" style="display:none">
-            <thead><tr><th>PID</th><th>PROCESS NAME</th></tr></thead>
-            <tbody id="proc-body"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="spacer"></div>
+      <div class="ws-pill off" id="ws-pill">● DISCONNECTED</div>
     </div>
 
-    <!-- RIGHT: MESSAGES + HARDWARE + STATS -->
-    <div id="right">
+    <!-- ════════════════════════════════════════════════════════════════
+         MAIN CONTENT
+         ════════════════════════════════════════════════════════════════ -->
+    <div id="main">
 
-      <!-- SERVER MESSAGES -->
-      <div class="panel" id="msgs" style="border:none;border-left:1px solid var(--border)">
-        <div class="ph">
-          <span class="dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>
-          SERVER MESSAGES
-        </div>
-        <div id="msg-log"></div>
-        <div class="msg-toolbar" style="flex-direction:column;gap:6px">
-          <div style="display:flex;gap:6px;align-items:center">
-            <span style="font-size:9px;font-family:var(--mono);color:var(--dim);white-space:nowrap;letter-spacing:1px">TO</span>
-            <select id="msg-target" style="flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--bright);font-family:var(--mono);font-size:11px;padding:5px 7px;border-radius:3px;outline:none">
-              <option value="all">Everyone (Public)</option>
-              <option value="server">Server (Private)</option>
-            </select>
+      <!-- ── CENTER: GAUGES + PROCESS TABLE ── -->
+      <div id="center">
+
+        <!-- resource gauges -->
+        <div id="gauges">
+
+          <div class="gc">
+            <div class="gc-lbl">CPU</div>
+            <div class="ring">
+              <svg viewBox="0 0 62 62">
+                <circle class="tr" cx="31" cy="31" r="26"/>
+                <circle class="fi" id="g-cpu" cx="31" cy="31" r="26" stroke="var(--blue)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+              </svg>
+              <div class="ring-val" id="v-cpu">0%</div>
+            </div>
           </div>
-          <div style="display:flex;gap:6px">
-            <input id="msg-input" placeholder="Type message…" />
-            <button id="msg-send">SEND</button>
+
+          <div class="gc">
+            <div class="gc-lbl">RAM</div>
+            <div class="ring">
+              <svg viewBox="0 0 62 62">
+                <circle class="tr" cx="31" cy="31" r="26"/>
+                <circle class="fi" id="g-ram" cx="31" cy="31" r="26" stroke="var(--purple)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+              </svg>
+              <div class="ring-val" id="v-ram">0%</div>
+            </div>
+          </div>
+
+          <div class="gc">
+            <div class="gc-lbl">GPU</div>
+            <div class="ring">
+              <svg viewBox="0 0 62 62">
+                <circle class="tr" cx="31" cy="31" r="26"/>
+                <circle class="fi" id="g-gpu" cx="31" cy="31" r="26" stroke="var(--orange)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+              </svg>
+              <div class="ring-val" id="v-gpu">0%</div>
+            </div>
+          </div>
+
+          <div class="gc">
+            <div class="gc-lbl">POWER</div>
+            <div class="ring">
+              <svg viewBox="0 0 62 62">
+                <circle class="tr" cx="31" cy="31" r="26"/>
+                <circle class="fi" id="g-pwr" cx="31" cy="31" r="26" stroke="var(--yellow)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+              </svg>
+              <div class="ring-val" id="v-pwr">0W</div>
+            </div>
+            <div class="gc-sub">max 200W</div>
+          </div>
+
+          <div class="gc">
+            <div class="gc-lbl">CO₂/s</div>
+            <div class="ring">
+              <svg viewBox="0 0 62 62">
+                <circle class="tr" cx="31" cy="31" r="26"/>
+                <circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+              </svg>
+              <div class="ring-val" id="v-co2" style="font-size:9px">0g</div>
+            </div>
+            <div class="gc-sub">per sec</div>
+          </div>
+
+        </div>
+
+        <!-- process table -->
+        <div id="proc-wrap" class="panel" style="border:none;border-top:1px solid var(--border)">
+          <div class="ph">
+            <span class="dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></span>
+            MY PROCESSES
+            <span class="badge" id="proc-cnt">0</span>
+          </div>
+          <input id="proc-search" placeholder="Filter processes…">
+          <div id="proc-scroll">
+            <div class="empty" id="proc-empty">Waiting for data…</div>
+            <table id="proc-tbl" style="display:none">
+              <thead>
+                <tr><th>PID</th><th>PROCESS NAME</th></tr>
+              </thead>
+              <tbody id="proc-body"></tbody>
+            </table>
           </div>
         </div>
+
       </div>
 
-      <!-- HARDWARE INFO -->
-      <div id="hw" style="border-left:1px solid var(--border)">
-        <div class="ph">
-          <span class="dot" style="background:var(--orange);box-shadow:0 0 5px var(--orange)"></span>
-          MY HARDWARE
+      <!-- ── RIGHT: MESSAGES + HARDWARE + STATS ── -->
+      <div id="right">
+
+        <!-- server messages -->
+        <div class="panel" id="msgs" style="border:none;border-left:1px solid var(--border)">
+          <div class="ph">
+            <span class="dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>
+            SERVER MESSAGES
+          </div>
+
+          <div id="msg-log"></div>
+
+          <div class="msg-toolbar" style="flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:9px;font-family:var(--mono);color:var(--dim);white-space:nowrap;letter-spacing:1px">TO</span>
+              <select id="msg-target" style="flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--bright);font-family:var(--mono);font-size:11px;padding:5px 7px;border-radius:3px;outline:none">
+                <option value="all">Everyone (Public)</option>
+                <option value="server">Server (Private)</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:6px">
+              <input id="msg-input" placeholder="Type message…">
+              <button id="msg-send">SEND</button>
+            </div>
+          </div>
         </div>
-        <div id="hw-scroll"><div class="empty">Waiting for hardware data…</div></div>
+
+        <!-- hardware info -->
+        <div id="hw" style="border-left:1px solid var(--border)">
+          <div class="ph">
+            <span class="dot" style="background:var(--orange);box-shadow:0 0 5px var(--orange)"></span>
+            MY HARDWARE
+          </div>
+          <div id="hw-scroll">
+            <div class="empty">Waiting for hardware data…</div>
+          </div>
+        </div>
+
+        <!-- stats footer -->
+        <div id="stats-bar" style="border-left:1px solid var(--border)">
+          <div class="sc">
+            <div class="sc-lbl">Power</div>
+            <div class="sc-val" id="st-pwr">0 W</div>
+          </div>
+          <div class="sc">
+            <div class="sc-lbl">CO₂ Total</div>
+            <div class="sc-val" id="st-co2">0.000 g</div>
+          </div>
+          <div class="sc">
+            <div class="sc-lbl">Processes</div>
+            <div class="sc-val" id="st-proc">0</div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- STATS FOOTER -->
-      <div id="stats-bar" style="border-left:1px solid var(--border)">
-        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val" id="st-pwr">0 W</div></div>
-        <div class="sc"><div class="sc-lbl">CO₂ Total</div><div class="sc-val" id="st-co2">0.000 g</div></div>
-        <div class="sc"><div class="sc-lbl">Processes</div><div class="sc-val" id="st-proc">0</div></div>
-      </div>
     </div>
-
   </div>
-</div>
 
 <script>
-// ── Config ─────────────────────────────────────────────────────────────
-const CIRC = 163.4;
-let ws      = null;
-let myCid   = null;
-let wsUrl   = 'ws://127.0.0.1:9999';
-let myProcs = [];
-let myHw    = [];
-let filterQ = '';
-let totalCo2 = 0;
+  /* ════════════════════════════════════════════════════════════════════
+     CONFIG / STATE
+     ════════════════════════════════════════════════════════════════════ */
 
-// ── Setup overlay ──────────────────────────────────────────────────────
-document.getElementById('cid-btn').addEventListener('click', () => {
-  const cid = parseInt(document.getElementById('cid-input').value);
-  const url = document.getElementById('setup-ws').value.trim();
-  if (!cid || cid < 1) { document.getElementById('cid-input').style.borderColor='var(--red)'; return; }
-  if (!url) { document.getElementById('setup-ws').style.borderColor='var(--red)'; return; }
-  myCid  = cid;
-  wsUrl  = url;
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('tb-cid').textContent = '#' + myCid;
-  connect();
-});
-document.getElementById('cid-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('cid-btn').click();
-});
+  const CIRC = 163.4;   // circumference of the gauge ring (2πr, r=26)
 
-// ── WebSocket ──────────────────────────────────────────────────────────
-function connect() {
-  ws = new WebSocket(wsUrl);
-  ws.onopen  = () => { setPill(true);  sysMsg('Connected to server'); ws.send(JSON.stringify({type:'list'})); };
-  ws.onclose = () => { setPill(false); sysMsg('Disconnected — retrying in 3s…'); setTimeout(connect, 3000); };
-  ws.onerror = () => ws.close();
-  ws.onmessage = e => { try { handle(JSON.parse(e.data)); } catch(_){} };
-}
+  let ws       = null;  // active WebSocket connection
+  let myCid    = null;  // this client's ID, set from the setup overlay
+  let wsUrl    = 'ws://127.0.0.1:9999';
+  let myProcs  = [];     // latest process list for this client
+  let myHw     = [];     // latest hardware info for this client
+  let filterQ  = '';     // current process-table search filter
+  let totalCo2 = 0;      // running total of CO2 emitted (grams)
 
-function setPill(on) {
-  const p = document.getElementById('ws-pill');
-  p.textContent = on ? '● CONNECTED' : '● DISCONNECTED';
-  p.className   = 'ws-pill ' + (on ? 'on' : 'off');
-}
 
-function wsSend(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+  /* ════════════════════════════════════════════════════════════════════
+     SETUP OVERLAY
+     ════════════════════════════════════════════════════════════════════ */
 
-// ── Message handler ────────────────────────────────────────────────────
-function handle(msg) {
-  switch (msg.type) {
+  function handleConnectClick() {
+    const cid = parseInt(document.getElementById('cid-input').value);
+    const url = document.getElementById('setup-ws').value.trim();
 
-    case 'full_state': {
-      // Extract own client data from full state
-      const me = msg.clients?.find(c => c.cid === myCid);
-      if (!me) break;
-      if (me.metrics)  updateGauges(me.metrics);
-      if (me.hardware?.length) { myHw = me.hardware; renderHw(); }
-      // Rebuild target dropdown with all other clients
-      updateTargetDropdown(msg.clients || []);
-      break;
+    if (!cid || cid < 1) {
+      document.getElementById('cid-input').style.borderColor = 'var(--red)';
+      return;
+    }
+    if (!url) {
+      document.getElementById('setup-ws').style.borderColor = 'var(--red)';
+      return;
     }
 
-    case 'metrics_update':
-      if (msg.cid !== myCid) break;
-      totalCo2 += (msg.snapshot?.emission || 0);
-      myProcs = msg.snapshot?.processes || [];
-      updateGauges(msg.snapshot);
-      renderProcs();
-      document.getElementById('st-co2').textContent = totalCo2.toFixed(3) + ' g';
-      break;
+    myCid = cid;
+    wsUrl = url;
 
-    case 'system':
-      sysMsg(msg.text);
-      // Re-request full state on client connect/disconnect to refresh dropdown
-      if (msg.text?.includes('connected') || msg.text?.includes('disconnected')) {
-        wsSend({ type: 'list' });
-      }
-      break;
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('tb-cid').textContent = '#' + myCid;
 
-    case 'hardware_update':
-      if (msg.cid !== myCid) break;
-      myHw = msg.hardware || [];
-      renderHw();
-      break;
-
-    case 'chat':
-      // Show messages directed to me or broadcast
-      if (!msg.to || parseInt(msg.to) === myCid) {
-        appendMsg(msg);
-      }
-      break;
-
-
-  }
-}
-
-// ── Gauges ─────────────────────────────────────────────────────────────
-function setGauge(id, vid, pct, label) {
-  document.getElementById(id).style.strokeDashoffset = CIRC - (CIRC * Math.min(pct, 100) / 100);
-  document.getElementById(vid).textContent = label;
-}
-
-function updateGauges(m) {
-  if (!m) return;
-  const cpu = m.cpu || 0, ram = m.ram || 0, gpu = m.gpu || 0;
-  const pwr = m.power || 0, em = m.emission || 0;
-
-  setGauge('g-cpu','v-cpu', cpu,  cpu + '%');
-  setGauge('g-ram','v-ram', ram,  ram + '%');
-  setGauge('g-gpu','v-gpu', gpu,  gpu + '%');
-  setGauge('g-pwr','v-pwr', (pwr/200)*100, pwr + 'W');
-  setGauge('g-co2','v-co2', Math.min((em/0.05)*100, 100), em.toFixed(3) + 'g');
-
-  document.getElementById('tb-cpu').textContent = cpu + '%';
-  document.getElementById('tb-ram').textContent = ram + '%';
-  document.getElementById('tb-gpu').textContent = gpu + '%';
-  document.getElementById('tb-pwr').textContent = pwr + ' W';
-  document.getElementById('st-pwr').textContent = pwr + ' W';
-}
-
-// ── Process table ──────────────────────────────────────────────────────
-document.getElementById('proc-search').addEventListener('input', e => {
-  filterQ = e.target.value.toLowerCase();
-  renderProcs();
-});
-
-function renderProcs() {
-  const filtered = filterQ
-    ? myProcs.filter(p => p.name.toLowerCase().includes(filterQ) || String(p.pid).includes(filterQ))
-    : myProcs;
-
-  const tbody = document.getElementById('proc-body');
-  const tbl   = document.getElementById('proc-tbl');
-  const empty = document.getElementById('proc-empty');
-
-  document.getElementById('proc-cnt').textContent = filtered.length;
-  document.getElementById('st-proc').textContent  = myProcs.length;
-
-  if (!filtered.length) {
-    tbl.style.display = 'none';
-    empty.style.display = 'block';
-    empty.textContent = filterQ ? 'No matching processes' : 'Waiting for data…';
-    return;
+    connect();
   }
 
-  tbl.style.display = 'table';
-  empty.style.display = 'none';
-  tbody.innerHTML = '';
+  document.getElementById('cid-btn').addEventListener('click', handleConnectClick);
 
-  filtered.forEach(p => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="pid">${p.pid}</td><td class="pname">${esc(p.name)}</td>`;
-    tbody.appendChild(tr);
+  document.getElementById('cid-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('cid-btn').click();
   });
-}
 
-// ── Hardware panel ─────────────────────────────────────────────────────
-function renderHw() {
-  const el = document.getElementById('hw-scroll');
-  if (!myHw?.length) { el.innerHTML = '<div class="empty">No hardware data</div>'; return; }
-  el.innerHTML = '';
-  myHw.forEach(item => {
-    const h = document.createElement('div');
-    h.className = 'hw-sec'; h.textContent = item.type || 'DEVICE';
-    el.appendChild(h);
-    Object.entries(item).forEach(([k, v]) => {
-      if (k === 'type') return;
-      const row = document.createElement('div');
-      row.className = 'hw-row';
-      row.innerHTML = `<span class="hw-k">${esc(k)}</span><span class="hw-v">${esc(String(v ?? ''))}</span>`;
-      el.appendChild(row);
+
+  /* ════════════════════════════════════════════════════════════════════
+     WEBSOCKET CONNECTION
+     ════════════════════════════════════════════════════════════════════ */
+
+  function connect() {
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      setConnectionPill(true);
+      logSystemMessage('Connected to server');
+      ws.send(JSON.stringify({ type: 'list' }));
+    };
+
+    ws.onclose = () => {
+      setConnectionPill(false);
+      logSystemMessage('Disconnected — retrying in 3s…');
+      setTimeout(connect, 3000);
+    };
+
+    ws.onerror = () => ws.close();
+
+    ws.onmessage = e => {
+      try {
+        handleServerMessage(JSON.parse(e.data));
+      } catch (_) {
+        // ignore malformed messages
+      }
+    };
+  }
+
+  function setConnectionPill(isConnected) {
+    const pill = document.getElementById('ws-pill');
+    pill.textContent = isConnected ? '● CONNECTED' : '● DISCONNECTED';
+    pill.className = 'ws-pill ' + (isConnected ? 'on' : 'off');
+  }
+
+  function wsSend(obj) {
+    if (ws && ws.readyState === 1) {
+      ws.send(JSON.stringify(obj));
+    }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     INCOMING MESSAGE ROUTER
+     ════════════════════════════════════════════════════════════════════ */
+
+  function handleServerMessage(msg) {
+    switch (msg.type) {
+
+      case 'full_state': {
+        // Extract this client's own data from the full state snapshot
+        const me = msg.clients?.find(c => c.cid === myCid);
+        if (!me) break;
+
+        if (me.metrics) updateGauges(me.metrics);
+        if (me.hardware?.length) {
+          myHw = me.hardware;
+          renderHardware();
+        }
+
+        // Rebuild the message-target dropdown with all other clients
+        updateTargetDropdown(msg.clients || []);
+        break;
+      }
+
+      case 'metrics_update':
+        if (msg.cid !== myCid) break;
+
+        totalCo2 += (msg.snapshot?.emission || 0);
+        myProcs = msg.snapshot?.processes || [];
+
+        updateGauges(msg.snapshot);
+        renderProcessTable();
+        document.getElementById('st-co2').textContent = totalCo2.toFixed(3) + ' g';
+        break;
+
+      case 'system':
+        logSystemMessage(msg.text);
+        // Re-request full state on client connect/disconnect to refresh the dropdown
+        if (msg.text?.includes('connected') || msg.text?.includes('disconnected')) {
+          wsSend({ type: 'list' });
+        }
+        break;
+
+      case 'hardware_update':
+        if (msg.cid !== myCid) break;
+        myHw = msg.hardware || [];
+        renderHardware();
+        break;
+
+      case 'chat':
+        // Show messages directed to me, or broadcast to everyone
+        if (!msg.to || parseInt(msg.to) === myCid) {
+          appendChatMessage(msg);
+        }
+        break;
+    }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     GAUGES
+     ════════════════════════════════════════════════════════════════════ */
+
+  function setGauge(ringId, valueId, percent, label) {
+    const clampedPercent = Math.min(percent, 100);
+    document.getElementById(ringId).style.strokeDashoffset = CIRC - (CIRC * clampedPercent / 100);
+    document.getElementById(valueId).textContent = label;
+  }
+
+  function updateGauges(metrics) {
+    if (!metrics) return;
+
+    const cpu   = metrics.cpu || 0;
+    const ram   = metrics.ram || 0;
+    const gpu   = metrics.gpu || 0;
+    const power = metrics.power || 0;
+    const emission = metrics.emission || 0;
+
+    setGauge('g-cpu', 'v-cpu', cpu, cpu + '%');
+    setGauge('g-ram', 'v-ram', ram, ram + '%');
+    setGauge('g-gpu', 'v-gpu', gpu, gpu + '%');
+    setGauge('g-pwr', 'v-pwr', (power / 200) * 100, power + 'W');
+    setGauge('g-co2', 'v-co2', Math.min((emission / 0.05) * 100, 100), emission.toFixed(3) + 'g');
+
+    document.getElementById('tb-cpu').textContent = cpu + '%';
+    document.getElementById('tb-ram').textContent = ram + '%';
+    document.getElementById('tb-gpu').textContent = gpu + '%';
+    document.getElementById('tb-pwr').textContent = power + ' W';
+    document.getElementById('st-pwr').textContent = power + ' W';
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     PROCESS TABLE
+     ════════════════════════════════════════════════════════════════════ */
+
+  document.getElementById('proc-search').addEventListener('input', e => {
+    filterQ = e.target.value.toLowerCase();
+    renderProcessTable();
+  });
+
+  function renderProcessTable() {
+    const filtered = filterQ
+      ? myProcs.filter(p =>
+          p.name.toLowerCase().includes(filterQ) || String(p.pid).includes(filterQ)
+        )
+      : myProcs;
+
+    const tbody = document.getElementById('proc-body');
+    const table = document.getElementById('proc-tbl');
+    const empty = document.getElementById('proc-empty');
+
+    document.getElementById('proc-cnt').textContent = filtered.length;
+    document.getElementById('st-proc').textContent = myProcs.length;
+
+    if (!filtered.length) {
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      empty.textContent = filterQ ? 'No matching processes' : 'Waiting for data…';
+      return;
+    }
+
+    table.style.display = 'table';
+    empty.style.display = 'none';
+    tbody.innerHTML = '';
+
+    filtered.forEach(process => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td class="pid">${process.pid}</td><td class="pname">${escapeHtml(process.name)}</td>`;
+      tbody.appendChild(row);
     });
-  });
-}
-
-// ── Server messages ────────────────────────────────────────────────────
-const msgLog = document.getElementById('msg-log');
-
-function appendMsg(msg) {
-  const div = document.createElement('div');
-  div.className = 'cm';
-  const isPriv = msg.private;
-  const isSelf = msg.self;
-  const fromLabel = msg.from === 'Server' ? 'SERVER' : (isSelf ? `ME (#${msg.from})` : `#${msg.from}`);
-  const toLabel   = msg.to ? ` → ${msg.to === 'Server' ? 'SERVER' : msg.to}` : '';
-  div.innerHTML =
-    `<span class="cm-from ${isPriv ? 'cm-priv' : ''}" style="color:${msg.color || '#b8c4d8'};${isSelf ? 'font-style:italic' : ''}">` +
-    `${isPriv ? '🔒 ' : ''}${fromLabel}${toLabel}</span>` +
-    `<span class="cm-time">${msg.ts || ''}</span><br>` +
-    `<span class="cm-text">${esc(msg.text || '')}</span>`;
-  msgLog.appendChild(div);
-  msgLog.scrollTop = msgLog.scrollHeight;
-  while (msgLog.children.length > 200) msgLog.removeChild(msgLog.firstChild);
-}
-
-function sysMsg(text) {
-  const div = document.createElement('div');
-  div.className = 'csys'; div.textContent = text;
-  msgLog.appendChild(div);
-  msgLog.scrollTop = msgLog.scrollHeight;
-}
-
-// Populate target dropdown from full_state client list
-function updateTargetDropdown(clients) {
-  const sel = document.getElementById('msg-target');
-  const cur = sel.value;
-  // Keep fixed options, rebuild client options
-  sel.innerHTML = '<option value="all">Everyone (Public)</option><option value="server">Server (Private)</option>';
-  clients.forEach(c => {
-    if (c.cid === myCid) return; // skip self
-    const o = document.createElement('option');
-    o.value = c.cid;
-    o.textContent = `Client #${c.cid} — ${c.addr} (Private)`;
-    sel.appendChild(o);
-  });
-  // Restore selection if still valid
-  if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
-}
-
-// Send message as this client with targeting
-function sendMsg() {
-  const text   = document.getElementById('msg-input').value.trim();
-  const target = document.getElementById('msg-target').value;
-  if (!text || !myCid) return;
-
-  if (target === 'all') {
-    wsSend({ type: 'client_chat', from_cid: myCid, text });
-    // Show own message in log
-    appendMsg({ from: String(myCid), text, ts: new Date().toTimeString().slice(0,8), color: '#4D9EFF', self: true });
-  } else {
-    wsSend({ type: 'client_private', from_cid: myCid, to: target === 'server' ? 'server' : parseInt(target), text });
-    // Show own private message in log
-    const toLabel = target === 'server' ? 'Server' : `#${target}`;
-    appendMsg({ from: String(myCid), to: toLabel, text, ts: new Date().toTimeString().slice(0,8), color: '#CC5DE8', private: true, self: true });
   }
 
-  document.getElementById('msg-input').value = '';
-}
 
-document.getElementById('msg-send').addEventListener('click', sendMsg);
-document.getElementById('msg-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+  /* ════════════════════════════════════════════════════════════════════
+     HARDWARE PANEL
+     ════════════════════════════════════════════════════════════════════ */
 
-// ── Clock ──────────────────────────────────────────────────────────────
-setInterval(() => { document.getElementById('tb-tm').textContent = new Date().toTimeString().slice(0,8); }, 1000);
+  function renderHardware() {
+    const container = document.getElementById('hw-scroll');
 
-// ── Utils ──────────────────────────────────────────────────────────────
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    if (!myHw?.length) {
+      container.innerHTML = '<div class="empty">No hardware data</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+
+    myHw.forEach(device => {
+      const heading = document.createElement('div');
+      heading.className = 'hw-sec';
+      heading.textContent = device.type || 'DEVICE';
+      container.appendChild(heading);
+
+      Object.entries(device).forEach(([key, value]) => {
+        if (key === 'type') return;
+
+        const row = document.createElement('div');
+        row.className = 'hw-row';
+        row.innerHTML =
+          `<span class="hw-k">${escapeHtml(key)}</span>` +
+          `<span class="hw-v">${escapeHtml(String(value ?? ''))}</span>`;
+        container.appendChild(row);
+      });
+    });
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     SERVER / CHAT MESSAGES
+     ════════════════════════════════════════════════════════════════════ */
+
+  const msgLog = document.getElementById('msg-log');
+
+  function appendChatMessage(msg) {
+    const isPrivate = msg.private;
+    const isSelf    = msg.self;
+
+    const fromLabel = msg.from === 'Server'
+      ? 'SERVER'
+      : (isSelf ? `ME (#${msg.from})` : `#${msg.from}`);
+
+    const toLabel = msg.to
+      ? ` → ${msg.to === 'Server' ? 'SERVER' : msg.to}`
+      : '';
+
+    const div = document.createElement('div');
+    div.className = 'cm';
+    div.innerHTML =
+      `<span class="cm-from ${isPrivate ? 'cm-priv' : ''}" style="color:${msg.color || '#b8c4d8'};${isSelf ? 'font-style:italic' : ''}">` +
+        `${isPrivate ? '🔒 ' : ''}${fromLabel}${toLabel}` +
+      `</span>` +
+      `<span class="cm-time">${msg.ts || ''}</span><br>` +
+      `<span class="cm-text">${escapeHtml(msg.text || '')}</span>`;
+
+    msgLog.appendChild(div);
+    msgLog.scrollTop = msgLog.scrollHeight;
+
+    // cap the log at 200 entries
+    while (msgLog.children.length > 200) {
+      msgLog.removeChild(msgLog.firstChild);
+    }
+  }
+
+  function logSystemMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'csys';
+    div.textContent = text;
+    msgLog.appendChild(div);
+    msgLog.scrollTop = msgLog.scrollHeight;
+  }
+
+  // Populate the message-target dropdown from the full_state client list
+  function updateTargetDropdown(clients) {
+    const select = document.getElementById('msg-target');
+    const previousValue = select.value;
+
+    // Keep the fixed options, rebuild the per-client options
+    select.innerHTML =
+      '<option value="all">Everyone (Public)</option>' +
+      '<option value="server">Server (Private)</option>';
+
+    clients.forEach(client => {
+      if (client.cid === myCid) return; // skip self
+
+      const option = document.createElement('option');
+      option.value = client.cid;
+      option.textContent = `Client #${client.cid} — ${client.addr} (Private)`;
+      select.appendChild(option);
+    });
+
+    // Restore the previous selection if it's still a valid option
+    if ([...select.options].some(o => o.value === previousValue)) {
+      select.value = previousValue;
+    }
+  }
+
+  // Send a message as this client, respecting the selected target
+  function sendMessage() {
+    const text   = document.getElementById('msg-input').value.trim();
+    const target = document.getElementById('msg-target').value;
+    if (!text || !myCid) return;
+
+    if (target === 'all') {
+      wsSend({ type: 'client_chat', from_cid: myCid, text });
+
+      // Show our own message in the log immediately
+      appendChatMessage({
+        from: String(myCid),
+        text,
+        ts: new Date().toTimeString().slice(0, 8),
+        color: '#4D9EFF',
+        self: true,
+      });
+    } else {
+      const toCid = target === 'server' ? 'server' : parseInt(target);
+      wsSend({ type: 'client_private', from_cid: myCid, to: toCid, text });
+
+      // Show our own private message in the log immediately
+      const toLabel = target === 'server' ? 'Server' : `#${target}`;
+      appendChatMessage({
+        from: String(myCid),
+        to: toLabel,
+        text,
+        ts: new Date().toTimeString().slice(0, 8),
+        color: '#CC5DE8',
+        private: true,
+        self: true,
+      });
+    }
+
+    document.getElementById('msg-input').value = '';
+  }
+
+  document.getElementById('msg-send').addEventListener('click', sendMessage);
+  document.getElementById('msg-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     CLOCK
+     ════════════════════════════════════════════════════════════════════ */
+
+  setInterval(() => {
+    document.getElementById('tb-tm').textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     UTILITIES
+     ════════════════════════════════════════════════════════════════════ */
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
 </script>
 </body>
 </html>
