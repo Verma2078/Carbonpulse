@@ -1,0 +1,7 @@
+psutil
+GPUtil
+pywin32
+py-cpuinfo
+pyopencl
+websockets
+pandas
