@@ -6,150 +6,650 @@
 <title>Carbonpulse</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#080a0e;--panel:#0e1118;--panel2:#131720;--border:#1e2535;--border2:#2a3347;
-  --text:#b8c4d8;--dim:#4a5568;--bright:#e2e8f4;
-  --green:#39d98a;--yellow:#f5c542;--red:#ff4d4d;
-  --blue:#4d9eff;--cyan:#00d4ff;--purple:#9b7fff;--orange:#ff8c42;
-  --mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px)}
 
-/* ── ROOT LAYOUT ── */
-#root{display:grid;grid-template-rows:48px 1fr;height:100vh}
+/* ============================================================
+   THEME VARIABLES
+   ============================================================ */
+:root {
+  /* backgrounds */
+  --bg: #080a0e;
+  --panel: #0e1118;
+  --panel2: #131720;
 
-/* ── TOP BAR ── */
-#topbar{display:flex;align-items:center;padding:0 18px;gap:16px;
-  background:var(--panel);border-bottom:1px solid var(--border);z-index:10}
-.logo{font-family:var(--mono);font-size:14px;color:var(--cyan);letter-spacing:3px;white-space:nowrap}
-.logo em{color:var(--dim);font-style:normal}
-.sep{width:1px;height:18px;background:var(--border2);flex-shrink:0}
-.tb-stat{display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono)}
-.tb-lbl{color:var(--dim)}
-.tb-val{color:var(--bright)}
-.tb-val.g{color:var(--green)}.tb-val.y{color:var(--yellow)}.tb-val.r{color:var(--red)}
-.spacer{flex:1}
-.ws-pill{font-size:10px;font-family:var(--mono);padding:3px 9px;border-radius:2px;
-  border:1px solid var(--border2);color:var(--dim);transition:all .3s}
-.ws-pill.on{color:var(--green);border-color:var(--green);text-shadow:0 0 8px var(--green)}
-.ws-pill.off{color:var(--red);border-color:var(--red)}
+  /* borders */
+  --border: #1e2535;
+  --border2: #2a3347;
 
-/* ── MAIN GRID ── */
-#main{display:grid;grid-template-columns:230px 1fr 290px;overflow:hidden}
+  /* text */
+  --text: #b8c4d8;
+  --dim: #4a5568;
+  --bright: #e2e8f4;
 
-/* ── GENERIC PANEL ── */
-.panel{background:var(--panel);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.ph{padding:9px 13px;border-bottom:1px solid var(--border);font-family:var(--mono);
-  font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;
-  flex-shrink:0;display:flex;align-items:center;gap:7px}
-.ph .dot{width:6px;height:6px;border-radius:50%}
-.ph .badge{margin-left:auto;color:var(--bright);background:var(--panel2);
-  padding:1px 6px;border-radius:2px;font-size:10px}
+  /* status / accent colors */
+  --green: #39d98a;
+  --yellow: #f5c542;
+  --red: #ff4d4d;
+  --blue: #4d9eff;
+  --cyan: #00d4ff;
+  --purple: #9b7fff;
+  --orange: #ff8c42;
 
-/* ── LEFT: CLIENTS ── */
-#sidebar{grid-column:1;border-right:1px solid var(--border)}
-#client-list{flex:1;overflow-y:auto;padding:6px}
-.cc{background:var(--panel2);border:1px solid var(--border);border-radius:4px;
-  margin-bottom:6px;padding:9px 11px;cursor:pointer;transition:border-color .2s}
-.cc:hover,.cc.sel{border-color:var(--cyan)}
-.cc.sel{background:#0c1820}
-.cc-top{display:flex;align-items:center;gap:7px;margin-bottom:5px}
-.cc-id{font-family:var(--mono);font-size:12px;color:var(--cyan);font-weight:700}
-.cc-addr{font-size:10px;color:var(--dim);font-family:var(--mono)}
-.cc-bars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
-.cc-bar{display:flex;flex-direction:column;gap:2px}
-.cc-bar-label{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:1px}
-.cc-bar-track{height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
-.cc-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
-.cc-bar-val{font-size:10px;font-family:var(--mono)}
+  /* fonts */
+  --mono: 'Share Tech Mono', monospace;
+  --sans: 'Barlow', sans-serif;
+}
 
-/* ── CENTER ── */
-#center{grid-column:2;display:flex;flex-direction:column;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+html,
+body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+}
 
-/* gauges row */
-#gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
-  background:var(--border);flex-shrink:0;border-bottom:1px solid var(--border)}
-.gc{background:var(--panel);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.gc-lbl{font-size:9px;font-family:var(--mono);letter-spacing:2px;color:var(--dim);text-transform:uppercase}
-.ring{position:relative;width:62px;height:62px}
-.ring svg{transform:rotate(-90deg)}
-.ring .tr{fill:none;stroke:var(--border2);stroke-width:5}
-.ring .fi{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
-.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--bright)}
-.gc-sub{font-size:9px;font-family:var(--mono);color:var(--dim)}
+/* subtle CRT scanline overlay across the whole screen */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, .05) 2px,
+    rgba(0, 0, 0, .05) 4px
+  );
+}
 
-/* process table */
-#proc-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;border-top:1px solid var(--border)}
-#proc-scroll{flex:1;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
-thead th{position:sticky;top:0;background:var(--panel2);padding:7px 12px;
-  text-align:left;font-size:9px;letter-spacing:1.5px;color:var(--dim);
-  border-bottom:1px solid var(--border);font-weight:600}
-tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-tbody tr:hover{background:var(--panel2)}
-tbody td{padding:5px 12px}
-td.pid{color:var(--cyan)}
-td.pname{color:var(--text)}
-.kill-btn{background:transparent;border:1px solid var(--border2);color:var(--red);
-  font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;cursor:pointer;transition:all .15s}
-.kill-btn:hover{background:rgba(255,77,77,.12);border-color:var(--red)}
-.empty{padding:24px;text-align:center;color:var(--dim);font-family:var(--mono);font-size:11px}
+/* ============================================================
+   ROOT LAYOUT
+   ============================================================ */
+#root {
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  height: 100vh;
+}
 
-/* ── RIGHT ── */
-#right{grid-column:3;display:flex;flex-direction:column;overflow:hidden}
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+#topbar {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
 
-/* chat */
-#chat{flex:1;display:flex;flex-direction:column;min-height:0;border-bottom:1px solid var(--border)}
-#chat-log{flex:1;overflow-y:auto;padding:8px 11px;display:flex;flex-direction:column;gap:2px}
-.cm{font-size:11px;line-height:1.55;animation:fi .18s ease}
-.cm-from{font-family:var(--mono);font-weight:700}
-.cm-time{font-family:var(--mono);font-size:9px;color:var(--dim);margin-left:5px}
-.cm-text{color:var(--text)}
-.csys{text-align:center;font-family:var(--mono);font-size:10px;color:var(--dim);
-  padding:3px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:2px 0}
+.logo {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+.logo em {
+  color: var(--dim);
+  font-style: normal;
+}
 
-/* chat toolbar — target selector + input */
-#chat-tools{padding:8px 10px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:6px}
-.ct-row{display:flex;gap:6px;align-items:center}
-.ct-label{font-size:9px;font-family:var(--mono);color:var(--dim);letter-spacing:1px;white-space:nowrap}
-select.ct-sel{flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--bright);
-  font-family:var(--mono);font-size:11px;padding:5px 7px;border-radius:3px;outline:none}
-select.ct-sel:focus{border-color:var(--cyan)}
-#chat-input{flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:3px;
-  color:var(--bright);font-family:var(--mono);font-size:11px;padding:7px 9px;outline:none}
-#chat-input:focus{border-color:var(--cyan)}
-#chat-input::placeholder{color:var(--dim)}
-#chat-send{background:var(--cyan);border:none;color:#000;font-family:var(--mono);
-  font-size:10px;font-weight:700;padding:0 11px;border-radius:3px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
-#chat-send:hover{opacity:.8}
+.sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
 
-/* hardware */
-#hw{height:170px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden}
-#hw-scroll{flex:1;overflow-y:auto;padding:5px 10px}
-.hw-sec{font-size:9px;letter-spacing:2px;color:var(--cyan);padding:5px 0 2px;text-transform:uppercase}
-.hw-row{display:flex;gap:5px;font-family:var(--mono);font-size:10px;
-  padding:2px 0;border-bottom:1px solid var(--border)}
-.hw-k{color:var(--dim);min-width:120px;flex-shrink:0}
-.hw-v{color:var(--bright);word-break:break-all}
+.tb-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--mono);
+}
+.tb-lbl { color: var(--dim); }
+.tb-val { color: var(--bright); }
+.tb-val.g { color: var(--green); }
+.tb-val.y { color: var(--yellow); }
+.tb-val.r { color: var(--red); }
 
-/* totals */
-#totals{display:flex;flex-shrink:0;border-top:1px solid var(--border);background:var(--panel)}
-.tc{flex:1;padding:7px 11px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:1px}
-.tc:last-child{border-right:none}
-.tc-lbl{font-size:9px;font-family:var(--mono);letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
-.tc-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--yellow)}
+.spacer { flex: 1; }
 
-/* scrollbars */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.ws-pill {
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 3px 9px;
+  border-radius: 2px;
+  border: 1px solid var(--border2);
+  color: var(--dim);
+  transition: all .3s;
+}
+.ws-pill.on {
+  color: var(--green);
+  border-color: var(--green);
+  text-shadow: 0 0 8px var(--green);
+}
+.ws-pill.off {
+  color: var(--red);
+  border-color: var(--red);
+}
 
-@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* ============================================================
+   MAIN GRID  (sidebar | center | right rail)
+   ============================================================ */
+#main {
+  display: grid;
+  grid-template-columns: 230px 1fr 290px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   GENERIC PANEL (shared by sidebar / process wrap / chat / hw)
+   ============================================================ */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* panel header */
+.ph {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ph .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.ph .badge {
+  margin-left: auto;
+  color: var(--bright);
+  background: var(--panel2);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 10px;
+}
+
+/* ============================================================
+   LEFT: CLIENT LIST
+   ============================================================ */
+#sidebar {
+  grid-column: 1;
+  border-right: 1px solid var(--border);
+}
+
+#client-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+/* client card */
+.cc {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  padding: 9px 11px;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.cc:hover,
+.cc.sel {
+  border-color: var(--cyan);
+}
+.cc.sel {
+  background: #0c1820;
+}
+
+.cc-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+.cc-id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  font-weight: 700;
+}
+.cc-addr {
+  font-size: 10px;
+  color: var(--dim);
+  font-family: var(--mono);
+}
+
+/* client card resource bars (CPU / RAM / GPU) */
+.cc-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3px;
+}
+.cc-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cc-bar-label {
+  font-size: 9px;
+  color: var(--dim);
+  font-family: var(--mono);
+  letter-spacing: 1px;
+}
+.cc-bar-track {
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cc-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .5s ease;
+}
+.cc-bar-val {
+  font-size: 10px;
+  font-family: var(--mono);
+}
+
+/* ============================================================
+   CENTER COLUMN (gauges + process table)
+   ============================================================ */
+#center {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* -------- gauges row -------- */
+#gauges {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.gc {
+  background: var(--panel);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.gc-lbl {
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.gc-sub {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--dim);
+}
+
+/* circular gauge ring */
+.ring {
+  position: relative;
+  width: 62px;
+  height: 62px;
+}
+.ring svg {
+  transform: rotate(-90deg);
+}
+.ring .tr {
+  fill: none;
+  stroke: var(--border2);
+  stroke-width: 5;
+}
+.ring .fi {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .6s ease;
+}
+.ring-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bright);
+}
+
+/* -------- process table -------- */
+#proc-wrap {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+#proc-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel2);
+  padding: 7px 12px;
+  text-align: left;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+tbody tr:hover {
+  background: var(--panel2);
+}
+tbody td {
+  padding: 5px 12px;
+}
+td.pid { color: var(--cyan); }
+td.pname { color: var(--text); }
+
+.kill-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.kill-btn:hover {
+  background: rgba(255, 77, 77, .12);
+  border-color: var(--red);
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+/* ============================================================
+   RIGHT RAIL (chat + hardware + totals)
+   ============================================================ */
+#right {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* -------- chat -------- */
+#chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-bottom: 1px solid var(--border);
+}
+#chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* one chat message */
+.cm {
+  font-size: 11px;
+  line-height: 1.55;
+  animation: fi .18s ease;
+}
+.cm-from {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.cm-time {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  margin-left: 5px;
+}
+.cm-text {
+  color: var(--text);
+}
+
+/* system message (connect / disconnect notices) */
+.csys {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  padding: 3px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 2px 0;
+}
+
+/* chat toolbar: target selector + input row */
+#chat-tools {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ct-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.ct-label {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--dim);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+select.ct-sel {
+  flex: 1;
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  color: var(--bright);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 7px;
+  border-radius: 3px;
+  outline: none;
+}
+select.ct-sel:focus {
+  border-color: var(--cyan);
+}
+
+#chat-input {
+  flex: 1;
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  color: var(--bright);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 7px 9px;
+  outline: none;
+}
+#chat-input:focus {
+  border-color: var(--cyan);
+}
+#chat-input::placeholder {
+  color: var(--dim);
+}
+
+#chat-send {
+  background: var(--cyan);
+  border: none;
+  color: #000;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 11px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity .2s;
+  white-space: nowrap;
+}
+#chat-send:hover {
+  opacity: .8;
+}
+
+/* -------- hardware panel -------- */
+#hw {
+  height: 170px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#hw-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 5px 10px;
+}
+.hw-sec {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  padding: 5px 0 2px;
+  text-transform: uppercase;
+}
+.hw-row {
+  display: flex;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hw-k {
+  color: var(--dim);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+.hw-v {
+  color: var(--bright);
+  word-break: break-all;
+}
+
+/* -------- totals strip -------- */
+#totals {
+  display: flex;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+}
+.tc {
+  flex: 1;
+  padding: 7px 11px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.tc:last-child {
+  border-right: none;
+}
+.tc-lbl {
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.tc-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+/* ============================================================
+   SCROLLBARS
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 2px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fi {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .3; }
+}
+
 </style>
 </head>
 <body>
@@ -159,13 +659,18 @@ select.ct-sel:focus{border-color:var(--cyan)}
   <div id="topbar">
     <div class="logo">Carbonpulse</div>
     <div class="sep"></div>
+
     <div class="tb-stat"><span class="tb-lbl">CLIENTS</span><span class="tb-val g" id="tb-cl">0</span></div>
     <div class="sep"></div>
+
     <div class="tb-stat"><span class="tb-lbl">POWER</span><span class="tb-val y" id="tb-pw">0 W</span></div>
     <div class="sep"></div>
+
     <div class="tb-stat"><span class="tb-lbl">CO₂</span><span class="tb-val" id="tb-co">0.0000 g</span></div>
     <div class="sep"></div>
+
     <div class="tb-stat"><span class="tb-lbl">TIME</span><span class="tb-val" id="tb-tm">--:--:--</span></div>
+
     <div class="spacer"></div>
     <div class="ws-pill off" id="ws-pill">● DISCONNECTED</div>
   </div>
@@ -173,49 +678,110 @@ select.ct-sel:focus{border-color:var(--cyan)}
   <!-- MAIN -->
   <div id="main">
 
-    <!-- LEFT -->
+    <!-- LEFT: client list -->
     <div class="panel" id="sidebar">
-      <div class="ph"><span class="dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>CLIENTS<span class="badge" id="cl-cnt">0</span></div>
+      <div class="ph">
+        <span class="dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>
+        CLIENTS
+        <span class="badge" id="cl-cnt">0</span>
+      </div>
       <div id="client-list"><div class="empty">No clients connected</div></div>
     </div>
 
-    <!-- CENTER -->
+    <!-- CENTER: gauges + process table -->
     <div id="center">
+
       <div id="gauges">
-        <div class="gc"><div class="gc-lbl">CPU</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-cpu" cx="31" cy="31" r="26" stroke="var(--blue)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-cpu">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">RAM</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-ram" cx="31" cy="31" r="26" stroke="var(--purple)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-ram">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">GPU</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-gpu" cx="31" cy="31" r="26" stroke="var(--orange)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-gpu">0%</div></div></div>
-        <div class="gc"><div class="gc-lbl">POWER</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-pwr" cx="31" cy="31" r="26" stroke="var(--yellow)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-pwr">0W</div></div>
-          <div class="gc-sub">max 200W</div></div>
-        <div class="gc"><div class="gc-lbl">CO₂/s</div>
-          <div class="ring"><svg viewBox="0 0 62 62"><circle class="tr" cx="31" cy="31" r="26"/><circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/></svg><div class="ring-val" id="v-co2" style="font-size:9px">0g</div></div>
-          <div class="gc-sub">per sec</div></div>
+        <div class="gc">
+          <div class="gc-lbl">CPU</div>
+          <div class="ring">
+            <svg viewBox="0 0 62 62">
+              <circle class="tr" cx="31" cy="31" r="26"/>
+              <circle class="fi" id="g-cpu" cx="31" cy="31" r="26" stroke="var(--blue)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            </svg>
+            <div class="ring-val" id="v-cpu">0%</div>
+          </div>
+        </div>
+
+        <div class="gc">
+          <div class="gc-lbl">RAM</div>
+          <div class="ring">
+            <svg viewBox="0 0 62 62">
+              <circle class="tr" cx="31" cy="31" r="26"/>
+              <circle class="fi" id="g-ram" cx="31" cy="31" r="26" stroke="var(--purple)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            </svg>
+            <div class="ring-val" id="v-ram">0%</div>
+          </div>
+        </div>
+
+        <div class="gc">
+          <div class="gc-lbl">GPU</div>
+          <div class="ring">
+            <svg viewBox="0 0 62 62">
+              <circle class="tr" cx="31" cy="31" r="26"/>
+              <circle class="fi" id="g-gpu" cx="31" cy="31" r="26" stroke="var(--orange)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            </svg>
+            <div class="ring-val" id="v-gpu">0%</div>
+          </div>
+        </div>
+
+        <div class="gc">
+          <div class="gc-lbl">POWER</div>
+          <div class="ring">
+            <svg viewBox="0 0 62 62">
+              <circle class="tr" cx="31" cy="31" r="26"/>
+              <circle class="fi" id="g-pwr" cx="31" cy="31" r="26" stroke="var(--yellow)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            </svg>
+            <div class="ring-val" id="v-pwr">0W</div>
+          </div>
+          <div class="gc-sub">max 200W</div>
+        </div>
+
+        <div class="gc">
+          <div class="gc-lbl">CO₂/s</div>
+          <div class="ring">
+            <svg viewBox="0 0 62 62">
+              <circle class="tr" cx="31" cy="31" r="26"/>
+              <circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            </svg>
+            <div class="ring-val" id="v-co2" style="font-size:9px">0g</div>
+          </div>
+          <div class="gc-sub">per sec</div>
+        </div>
       </div>
 
       <div id="proc-wrap" class="panel" style="border:none">
-        <div class="ph"><span class="dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></span>
-          PROCESSES &mdash; <span id="proc-lbl" style="color:var(--bright);margin-left:4px">select a client</span>
-          <span class="badge" id="proc-cnt">0</span></div>
+        <div class="ph">
+          <span class="dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></span>
+          PROCESSES &mdash;
+          <span id="proc-lbl" style="color:var(--bright);margin-left:4px">select a client</span>
+          <span class="badge" id="proc-cnt">0</span>
+        </div>
         <div id="proc-scroll">
           <div class="empty" id="proc-empty">Select a client on the left</div>
           <table id="proc-tbl" style="display:none">
-            <thead><tr><th>PID</th><th>PROCESS NAME</th><th style="text-align:right;padding-right:10px">ACTION</th></tr></thead>
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>PROCESS NAME</th>
+                <th style="text-align:right;padding-right:10px">ACTION</th>
+              </tr>
+            </thead>
             <tbody id="proc-body"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: chat, hardware, totals -->
     <div id="right">
 
       <!-- CHAT -->
       <div class="panel" id="chat">
-        <div class="ph"><span class="dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>CHAT</div>
+        <div class="ph">
+          <span class="dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>
+          CHAT
+        </div>
         <div id="chat-log"></div>
         <div id="chat-tools">
           <div class="ct-row">
@@ -233,17 +799,28 @@ select.ct-sel:focus{border-color:var(--cyan)}
 
       <!-- HARDWARE -->
       <div class="panel" id="hw">
-        <div class="ph"><span class="dot" style="background:var(--orange);box-shadow:0 0 5px var(--orange)"></span>
+        <div class="ph">
+          <span class="dot" style="background:var(--orange);box-shadow:0 0 5px var(--orange)"></span>
           HARDWARE
-          <span style="margin-left:auto;font-size:9px;color:var(--dim)" id="hw-lbl">no selection</span></div>
+          <span style="margin-left:auto;font-size:9px;color:var(--dim)" id="hw-lbl">no selection</span>
+        </div>
         <div id="hw-scroll"><div class="empty">Select a client</div></div>
       </div>
 
       <!-- TOTALS -->
       <div id="totals">
-        <div class="tc"><div class="tc-lbl" id="tot-pw-lbl">Total Power</div><div class="tc-val" id="tot-pw">0 W</div></div>
-        <div class="tc"><div class="tc-lbl" id="tot-co-lbl">Total CO₂</div><div class="tc-val" id="tot-co">0.0000 g</div></div>
-        <div class="tc"><div class="tc-lbl">Clients</div><div class="tc-val" id="tot-cl">0</div></div>
+        <div class="tc">
+          <div class="tc-lbl" id="tot-pw-lbl">Total Power</div>
+          <div class="tc-val" id="tot-pw">0 W</div>
+        </div>
+        <div class="tc">
+          <div class="tc-lbl" id="tot-co-lbl">Total CO₂</div>
+          <div class="tc-val" id="tot-co">0.0000 g</div>
+        </div>
+        <div class="tc">
+          <div class="tc-lbl">Clients</div>
+          <div class="tc-val" id="tot-cl">0</div>
+        </div>
       </div>
     </div>
 
@@ -251,127 +828,133 @@ select.ct-sel:focus{border-color:var(--cyan)}
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────
+/* ============================================================
+   CONFIG
+   ============================================================ */
 const WS_URL = 'ws://127.0.0.1:9999';
-const CIRC   = 163.4;
+const CIRC   = 163.4; // circumference of the gauge ring (2 * PI * r=26), used for stroke-dashoffset math
 
-// ── State ─────────────────────────────────────────────────────────────
-let ws         = null;
-let state      = { clients: [], total_power: 0, total_emission: 0 };
-let selCid     = null;
+/* ============================================================
+   STATE
+   ============================================================ */
+let ws     = null;           // active WebSocket connection
+let state  = {                // last full snapshot received from the server
+  clients: [],
+  total_power: 0,
+  total_emission: 0
+};
+let selCid = null;           // currently selected client id (null = none selected)
 
-// ── WebSocket ─────────────────────────────────────────────────────────
+/* ============================================================
+   WEBSOCKET CONNECTION
+   ============================================================ */
 function connect() {
   ws = new WebSocket(WS_URL);
-  ws.onopen  = () => { setPill(true);  sysMsg('Dashboard connected'); ws.send(JSON.stringify({type:'list'})); };
-  ws.onclose = () => { setPill(false); sysMsg('Disconnected — retrying in 3s…'); setTimeout(connect, 3000); };
+
+  ws.onopen = () => {
+    setPill(true);
+    sysMsg('Dashboard connected');
+    ws.send(JSON.stringify({ type: 'list' }));
+  };
+
+  ws.onclose = () => {
+    setPill(false);
+    sysMsg('Disconnected — retrying in 3s…');
+    setTimeout(connect, 3000);
+  };
+
   ws.onerror = () => ws.close();
-  ws.onmessage = e => { try { handle(JSON.parse(e.data)); } catch(_){} };
+
+  ws.onmessage = e => {
+    try {
+      handle(JSON.parse(e.data));
+    } catch (_) {
+      // ignore malformed messages
+    }
+  };
 }
 
-function setPill(on) {
-  const p = document.getElementById('ws-pill');
-  p.textContent = on ? '● CONNECTED' : '● DISCONNECTED';
-  p.className   = 'ws-pill ' + (on ? 'on' : 'off');
+// Update the connection-status pill in the top bar.
+function setPill(isConnected) {
+  const pill = document.getElementById('ws-pill');
+  pill.textContent = isConnected ? '● CONNECTED' : '● DISCONNECTED';
+  pill.className   = 'ws-pill ' + (isConnected ? 'on' : 'off');
 }
 
-function wsSend(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+// Send a JSON payload over the socket, but only if it's actually open.
+function wsSend(obj) {
+  if (ws && ws.readyState === 1) {
+    ws.send(JSON.stringify(obj));
+  }
+}
 
-// ── Message handler ───────────────────────────────────────────────────
+/* ============================================================
+   INCOMING MESSAGE HANDLER
+   ============================================================ */
 function handle(msg) {
   switch (msg.type) {
+
     case 'full_state':
       state = msg;
       renderClients();
       renderTopBar();
       refreshSelected();
       break;
+
     case 'metrics_update':
       updateMetrics(msg.cid, msg.snapshot);
       state.total_power    = msg.total_power;
       state.total_emission = msg.total_emission;
       renderTopBar();
       renderClients();
-      if (msg.cid === selCid) { renderGauges(msg.snapshot); renderProcs(msg.snapshot?.processes || [], msg.cid); renderTotalsStrip(selCid); }
+      if (msg.cid === selCid) {
+        renderGauges(msg.snapshot);
+        renderProcs(msg.snapshot?.processes || [], msg.cid);
+        renderTotalsStrip(selCid);
+      }
       break;
+
     case 'hardware_update':
       updateHw(msg.cid, msg.hardware);
-      if (msg.cid === selCid) renderHw(msg.hardware);
+      if (msg.cid === selCid) {
+        renderHw(msg.hardware);
+      }
       break;
+
     case 'chat':
       appendChat(msg);
       break;
+
     case 'system':
       sysMsg(msg.text);
       break;
   }
 }
 
-// ── State helpers ─────────────────────────────────────────────────────
-function getClient(cid) { return state.clients?.find(c => c.cid === cid); }
-
-function updateMetrics(cid, snap) {
-  const c = getClient(cid);
-  if (c) c.metrics = snap;
-}
-function updateHw(cid, hw) {
-  const c = getClient(cid);
-  if (c) c.hardware = hw;
+/* ============================================================
+   STATE HELPERS
+   ============================================================ */
+function getClient(cid) {
+  return state.clients?.find(c => c.cid === cid);
 }
 
-// ── Render clients sidebar ────────────────────────────────────────────
-function renderClients() {
-  const el  = document.getElementById('client-list');
-  const cnt = state.clients?.length || 0;
-
-  document.getElementById('cl-cnt').textContent  = cnt;
-  document.getElementById('tb-cl').textContent   = cnt;
-  document.getElementById('tot-cl').textContent  = cnt;
-
-  // Rebuild chat target dropdown
-  const sel = document.getElementById('chat-target');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="all">All Clients (Broadcast)</option>';
-  (state.clients || []).forEach(c => {
-    const o = document.createElement('option');
-    o.value = c.cid; o.textContent = `Client #${c.cid} (${c.addr})`;
-    sel.appendChild(o);
-  });
-  sel.value = cur;
-
-  if (!cnt) { el.innerHTML = '<div class="empty">No clients connected</div>'; return; }
-
-  el.innerHTML = '';
-  (state.clients || []).forEach(c => {
-    const m   = c.metrics || {};
-    const div = document.createElement('div');
-    div.className = 'cc' + (c.cid === selCid ? ' sel' : '');
-
-    const cpu = m.cpu || 0, ram = m.ram || 0, gpu = m.gpu || 0;
-    div.innerHTML = `
-      <div class="cc-top">
-        <span class="cc-id">CLIENT #${c.cid}</span>
-        <span class="cc-addr">${c.addr}</span>
-      </div>
-      <div class="cc-bars">
-        ${bar('CPU', cpu, 'var(--blue)')}
-        ${bar('RAM', ram, 'var(--purple)')}
-        ${bar('GPU', gpu, 'var(--orange)')}
-      </div>`;
-    div.addEventListener('click', () => selectClient(c.cid));
-    el.appendChild(div);
-  });
+function updateMetrics(cid, snapshot) {
+  const client = getClient(cid);
+  if (client) {
+    client.metrics = snapshot;
+  }
 }
 
-function bar(lbl, pct, color) {
-  return `<div class="cc-bar">
-    <div class="cc-bar-label">${lbl}</div>
-    <div class="cc-bar-track"><div class="cc-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-    <div class="cc-bar-val" style="color:${color}">${pct}%</div>
-  </div>`;
+function updateHw(cid, hardware) {
+  const client = getClient(cid);
+  if (client) {
+    client.hardware = hardware;
+  }
 }
 
-// ── Select client ─────────────────────────────────────────────────────
+/* ============================================================
+   CLIENT SELECTION
+   ============================================================ */
 function selectClient(cid) {
   selCid = cid;
   renderClients();
@@ -379,144 +962,311 @@ function selectClient(cid) {
   renderTotalsStrip(cid);
 }
 
+// Re-render every panel that depends on the currently selected client.
 function refreshSelected() {
-  const c = getClient(selCid);
-  if (!c) return;
-  renderGauges(c.metrics || {});
-  renderProcs(c.metrics?.processes || [], c.cid);
-  renderHw(c.hardware || []);
-  document.getElementById('proc-lbl').textContent = `Client #${c.cid} (${c.addr})`;
-  document.getElementById('hw-lbl').textContent   = `#${c.cid}`;
+  const client = getClient(selCid);
+  if (!client) return;
+
+  renderGauges(client.metrics || {});
+  renderProcs(client.metrics?.processes || [], client.cid);
+  renderHw(client.hardware || []);
+
+  document.getElementById('proc-lbl').textContent = `Client #${client.cid} (${client.addr})`;
+  document.getElementById('hw-lbl').textContent    = `#${client.cid}`;
 }
 
-// ── Gauges ────────────────────────────────────────────────────────────
-function setGauge(id, vid, pct, label) {
-  document.getElementById(id).style.strokeDashoffset = CIRC - (CIRC * Math.min(pct, 100) / 100);
-  document.getElementById(vid).textContent = label;
+/* ============================================================
+   SIDEBAR: CLIENT LIST
+   ============================================================ */
+function renderClients() {
+  const listEl = document.getElementById('client-list');
+  const count  = state.clients?.length || 0;
+
+  // top bar / totals strip client counters
+  document.getElementById('cl-cnt').textContent  = count;
+  document.getElementById('tb-cl').textContent   = count;
+  document.getElementById('tot-cl').textContent  = count;
+
+  rebuildChatTargetDropdown();
+
+  if (!count) {
+    listEl.innerHTML = '<div class="empty">No clients connected</div>';
+    return;
+  }
+
+  listEl.innerHTML = '';
+  (state.clients || []).forEach(client => {
+    listEl.appendChild(buildClientCard(client));
+  });
 }
-function renderGauges(m) {
-  setGauge('g-cpu','v-cpu', m.cpu||0, (m.cpu||0)+'%');
-  setGauge('g-ram','v-ram', m.ram||0, (m.ram||0)+'%');
-  setGauge('g-gpu','v-gpu', m.gpu||0, (m.gpu||0)+'%');
-  setGauge('g-pwr','v-pwr', ((m.power||0)/200)*100, (m.power||0)+'W');
-  setGauge('g-co2','v-co2', Math.min(((m.emission||0)/0.05)*100,100), (m.emission||0).toFixed(3)+'g');
+
+// Build a single client card element (used by renderClients).
+function buildClientCard(client) {
+  const metrics = client.metrics || {};
+  const cpu = metrics.cpu || 0;
+  const ram = metrics.ram || 0;
+  const gpu = metrics.gpu || 0;
+
+  const card = document.createElement('div');
+  card.className = 'cc' + (client.cid === selCid ? ' sel' : '');
+  card.innerHTML = `
+    <div class="cc-top">
+      <span class="cc-id">CLIENT #${client.cid}</span>
+      <span class="cc-addr">${client.addr}</span>
+    </div>
+    <div class="cc-bars">
+      ${bar('CPU', cpu, 'var(--blue)')}
+      ${bar('RAM', ram, 'var(--purple)')}
+      ${bar('GPU', gpu, 'var(--orange)')}
+    </div>`;
+
+  card.addEventListener('click', () => selectClient(client.cid));
+  return card;
 }
 
-// ── Process table ─────────────────────────────────────────────────────
-function renderProcs(procs, cid) {
-  const tbody = document.getElementById('proc-body');
-  const tbl   = document.getElementById('proc-tbl');
-  const empty = document.getElementById('proc-empty');
-  document.getElementById('proc-cnt').textContent = procs.length;
+// Small resource-bar markup used inside each client card.
+function bar(label, pct, color) {
+  return `
+    <div class="cc-bar">
+      <div class="cc-bar-label">${label}</div>
+      <div class="cc-bar-track">
+        <div class="cc-bar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      <div class="cc-bar-val" style="color:${color}">${pct}%</div>
+    </div>`;
+}
 
-  if (!procs.length) { tbl.style.display='none'; empty.style.display='block'; empty.textContent='No process data yet'; return; }
-  tbl.style.display='table'; empty.style.display='none';
-  tbody.innerHTML = '';
+// Keep the chat "TO" dropdown in sync with the current client list,
+// while preserving whatever the user had selected.
+function rebuildChatTargetDropdown() {
+  const select = document.getElementById('chat-target');
+  const previousValue = select.value;
 
-  procs.forEach(p => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="pid">${p.pid}</td><td class="pname">${esc(p.name)}</td>
-      <td style="text-align:right;padding-right:10px">
-        <button class="kill-btn" data-cid="${cid}" data-pid="${p.pid}">KILL</button></td>`;
-    tbody.appendChild(tr);
+  select.innerHTML = '<option value="all">All Clients (Broadcast)</option>';
+  (state.clients || []).forEach(client => {
+    const option = document.createElement('option');
+    option.value = client.cid;
+    option.textContent = `Client #${client.cid} (${client.addr})`;
+    select.appendChild(option);
   });
 
+  select.value = previousValue;
+}
+
+/* ============================================================
+   GAUGES (CPU / RAM / GPU / Power / CO2)
+   ============================================================ */
+
+// Set a single gauge ring's fill amount and center label.
+function setGauge(ringId, valueId, pct, label) {
+  document.getElementById(ringId).style.strokeDashoffset = CIRC - (CIRC * Math.min(pct, 100) / 100);
+  document.getElementById(valueId).textContent = label;
+}
+
+function renderGauges(metrics) {
+  const cpu     = metrics.cpu || 0;
+  const ram     = metrics.ram || 0;
+  const gpu     = metrics.gpu || 0;
+  const power   = metrics.power || 0;
+  const emission = metrics.emission || 0;
+
+  setGauge('g-cpu', 'v-cpu', cpu, cpu + '%');
+  setGauge('g-ram', 'v-ram', ram, ram + '%');
+  setGauge('g-gpu', 'v-gpu', gpu, gpu + '%');
+
+  // power gauge is scaled against a 200W max
+  setGauge('g-pwr', 'v-pwr', (power / 200) * 100, power + 'W');
+
+  // CO2 gauge is scaled against a 0.05g/s max, capped at 100%
+  setGauge('g-co2', 'v-co2', Math.min((emission / 0.05) * 100, 100), emission.toFixed(3) + 'g');
+}
+
+/* ============================================================
+   PROCESS TABLE
+   ============================================================ */
+function renderProcs(processes, cid) {
+  const tbody   = document.getElementById('proc-body');
+  const table   = document.getElementById('proc-tbl');
+  const emptyEl = document.getElementById('proc-empty');
+
+  document.getElementById('proc-cnt').textContent = processes.length;
+
+  if (!processes.length) {
+    table.style.display = 'none';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'No process data yet';
+    return;
+  }
+
+  table.style.display = 'table';
+  emptyEl.style.display = 'none';
+  tbody.innerHTML = '';
+
+  processes.forEach(proc => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="pid">${proc.pid}</td>
+      <td class="pname">${esc(proc.name)}</td>
+      <td style="text-align:right;padding-right:10px">
+        <button class="kill-btn" data-cid="${cid}" data-pid="${proc.pid}">KILL</button>
+      </td>`;
+    tbody.appendChild(row);
+  });
+
+  attachKillButtonHandlers(tbody);
+}
+
+// Wire up the KILL button in every row of the process table.
+function attachKillButtonHandlers(tbody) {
   tbody.querySelectorAll('.kill-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const cid2 = parseInt(btn.dataset.cid);
-      const pid  = parseInt(btn.dataset.pid);
-      if (confirm(`Kill PID ${pid} on Client #${cid2}?`)) {
-        wsSend({ type: 'kill', cid: cid2, pid });
-        // Optimistically remove from local state so table updates instantly
-        const c = getClient(cid2);
-        if (c?.metrics?.processes) {
-          c.metrics.processes = c.metrics.processes.filter(p => p.pid !== pid);
-          renderProcs(c.metrics.processes, cid2);
-        }
+      const cid = parseInt(btn.dataset.cid);
+      const pid = parseInt(btn.dataset.pid);
+
+      if (!confirm(`Kill PID ${pid} on Client #${cid}?`)) return;
+
+      wsSend({ type: 'kill', cid, pid });
+
+      // Optimistically remove the process from local state so the
+      // table updates instantly, without waiting for the server.
+      const client = getClient(cid);
+      if (client?.metrics?.processes) {
+        client.metrics.processes = client.metrics.processes.filter(p => p.pid !== pid);
+        renderProcs(client.metrics.processes, cid);
       }
     });
   });
 }
 
-// ── Hardware panel ────────────────────────────────────────────────────
-function renderHw(list) {
+/* ============================================================
+   HARDWARE PANEL
+   ============================================================ */
+function renderHw(hardwareList) {
   const el = document.getElementById('hw-scroll');
-  if (!list?.length) { el.innerHTML = '<div class="empty">No hardware data</div>'; return; }
+
+  if (!hardwareList?.length) {
+    el.innerHTML = '<div class="empty">No hardware data</div>';
+    return;
+  }
+
   el.innerHTML = '';
-  list.forEach(item => {
-    const h = document.createElement('div');
-    h.className = 'hw-sec'; h.textContent = item.type || 'DEVICE';
-    el.appendChild(h);
-    Object.entries(item).forEach(([k,v]) => {
-      if (k === 'type') return;
-      const row = document.createElement('div');
-      row.className = 'hw-row';
-      row.innerHTML = `<span class="hw-k">${esc(k)}</span><span class="hw-v">${esc(String(v??''))}</span>`;
-      el.appendChild(row);
-    });
+  hardwareList.forEach(item => {
+    el.appendChild(buildHwSectionHeader(item));
+    el.append(...buildHwRows(item));
   });
 }
 
-// ── Top bar & totals ──────────────────────────────────────────────────
+// Section header for one hardware device (e.g. "CPU", "GPU").
+function buildHwSectionHeader(item) {
+  const header = document.createElement('div');
+  header.className = 'hw-sec';
+  header.textContent = item.type || 'DEVICE';
+  return header;
+}
+
+// Key/value rows for one hardware device, skipping the "type" field
+// (that's already shown in the section header).
+function buildHwRows(item) {
+  return Object.entries(item)
+    .filter(([key]) => key !== 'type')
+    .map(([key, value]) => {
+      const row = document.createElement('div');
+      row.className = 'hw-row';
+      row.innerHTML = `<span class="hw-k">${esc(key)}</span><span class="hw-v">${esc(String(value ?? ''))}</span>`;
+      return row;
+    });
+}
+
+/* ============================================================
+   TOP BAR & TOTALS STRIP
+   ============================================================ */
 function renderTopBar() {
   document.getElementById('tb-pw').textContent = state.total_power + ' W';
-  document.getElementById('tb-co').textContent = (state.total_emission||0).toFixed(4) + ' g';
-  // Only update totals strip if no client is selected
+  document.getElementById('tb-co').textContent = (state.total_emission || 0).toFixed(4) + ' g';
+
+  // Only update the totals strip here if it's currently showing the
+  // global totals (i.e. no client selected) — otherwise leave it
+  // showing the selected client's numbers.
   if (selCid === null) {
     document.getElementById('tot-pw').textContent = state.total_power + ' W';
-    document.getElementById('tot-co').textContent = (state.total_emission||0).toFixed(4) + ' g';
+    document.getElementById('tot-co').textContent = (state.total_emission || 0).toFixed(4) + ' g';
   }
 }
 
+// Show either global totals (cid === null) or a single client's
+// power/CO2 numbers in the bottom totals strip.
 function renderTotalsStrip(cid) {
-  const pwLbl = document.getElementById('tot-pw-lbl');
-  const coLbl = document.getElementById('tot-co-lbl');
-  const pwVal = document.getElementById('tot-pw');
-  const coVal = document.getElementById('tot-co');
+  const pwLabelEl = document.getElementById('tot-pw-lbl');
+  const coLabelEl = document.getElementById('tot-co-lbl');
+  const pwValueEl = document.getElementById('tot-pw');
+  const coValueEl = document.getElementById('tot-co');
 
   if (cid === null) {
-    pwLbl.textContent = 'Total Power';
-    coLbl.textContent = 'Total CO\u2082';
-    pwVal.textContent = state.total_power + ' W';
-    coVal.textContent = (state.total_emission||0).toFixed(4) + ' g';
-  } else {
-    const c = getClient(cid);
-    const m = c?.metrics || {};
-    pwLbl.textContent = '#' + cid + ' Power';
-    coLbl.textContent = '#' + cid + ' CO\u2082';
-    pwVal.textContent = (m.power || 0) + ' W';
-    coVal.textContent = (m.emission || 0).toFixed(4) + ' g';
+    pwLabelEl.textContent = 'Total Power';
+    coLabelEl.textContent = 'Total CO\u2082';
+    pwValueEl.textContent = state.total_power + ' W';
+    coValueEl.textContent = (state.total_emission || 0).toFixed(4) + ' g';
+    return;
   }
+
+  const client  = getClient(cid);
+  const metrics = client?.metrics || {};
+
+  pwLabelEl.textContent = '#' + cid + ' Power';
+  coLabelEl.textContent = '#' + cid + ' CO\u2082';
+  pwValueEl.textContent = (metrics.power || 0) + ' W';
+  coValueEl.textContent = (metrics.emission || 0).toFixed(4) + ' g';
 }
 
-// ── Clock ─────────────────────────────────────────────────────────────
-setInterval(() => { document.getElementById('tb-tm').textContent = new Date().toTimeString().slice(0,8); }, 1000);
+/* ============================================================
+   CLOCK
+   ============================================================ */
+setInterval(() => {
+  document.getElementById('tb-tm').textContent = new Date().toTimeString().slice(0, 8);
+}, 1000);
 
-// ── Chat ──────────────────────────────────────────────────────────────
+/* ============================================================
+   CHAT
+   ============================================================ */
 const chatLog = document.getElementById('chat-log');
 
+// Append a single chat message bubble and scroll to the bottom.
+// Also trims the log to the most recent 300 messages.
 function appendChat(msg) {
   const div = document.createElement('div');
   div.className = 'cm';
-  const priv = msg.private ? ` → #${msg.to}` : '';
-  div.innerHTML = `<span class="cm-from" style="color:${msg.color||'#b8c4d8'}">#${msg.from}${priv}</span>`
-    + `<span class="cm-time">${msg.ts||''}</span><br>`
-    + `<span class="cm-text">${esc(msg.text||'')}</span>`;
+
+  const privateTag = msg.private ? ` → #${msg.to}` : '';
+  div.innerHTML =
+    `<span class="cm-from" style="color:${msg.color || '#b8c4d8'}">#${msg.from}${privateTag}</span>` +
+    `<span class="cm-time">${msg.ts || ''}</span><br>` +
+    `<span class="cm-text">${esc(msg.text || '')}</span>`;
+
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
-  while (chatLog.children.length > 300) chatLog.removeChild(chatLog.firstChild);
+
+  while (chatLog.children.length > 300) {
+    chatLog.removeChild(chatLog.firstChild);
+  }
 }
 
+// Append a centered system notice (connect/disconnect, etc).
 function sysMsg(text) {
   const div = document.createElement('div');
-  div.className = 'csys'; div.textContent = text;
+  div.className = 'csys';
+  div.textContent = text;
+
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
+// Send the current chat input, either as a broadcast or a private
+// message to the selected target.
 function sendChat() {
-  const text   = document.getElementById('chat-input').value.trim();
+  const input  = document.getElementById('chat-input');
   const target = document.getElementById('chat-target').value;
+  const text   = input.value.trim();
+
   if (!text) return;
 
   if (target === 'all') {
@@ -524,16 +1274,30 @@ function sendChat() {
   } else {
     wsSend({ type: 'private', cid: parseInt(target), text });
   }
-  document.getElementById('chat-input').value = '';
+
+  input.value = '';
 }
 
 document.getElementById('chat-send').addEventListener('click', sendChat);
-document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendChat();
+});
 
-// ── Utils ─────────────────────────────────────────────────────────────
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* ============================================================
+   UTILS
+   ============================================================ */
 
-// ── Boot ──────────────────────────────────────────────────────────────
+// Escape HTML-sensitive characters before injecting text into innerHTML.
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
 connect();
 </script>
 </body>
