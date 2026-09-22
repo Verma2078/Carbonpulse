@@ -3,768 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carbonpulse</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<title>CarbonPulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: '#F7F6EF',
+        panel: '#FFFFFF',
+        panel2: '#F0EFE3',
+        border: '#E5E2D3',
+        border2: '#D6D1BC',
+        ink: '#43483C',
+        dim: '#6E7263',
+        bright: '#20241C',
+        life: { DEFAULT: '#4C9A5F', light: '#E3F1E4' },
+        sun: '#E0A63C',
+        coral: '#DE5B4C',
+        ocean: '#4A85D1',
+        jade: '#2FA192',
+        lavender: '#8874CE',
+        clay: '#DD8A45',
+      },
+      fontFamily: {
+        display: ['Fraunces', 'serif'],
+        sans: ['Inter', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      keyframes: {
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.4)', opacity: '.5' },
+        },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(4px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        drift: {
+          '0%, 100%': { transform: 'translateY(0) rotate(-6deg)' },
+          '50%': { transform: 'translateY(-3px) rotate(-2deg)' },
+        },
+      },
+      animation: {
+        breathe: 'breathe 2.4s ease-in-out infinite',
+        fadeUp: '.2s ease fadeUp',
+        drift: 'drift 3.4s ease-in-out infinite',
+      },
+    },
+  },
+};
+</script>
 <style>
-
-/* ============================================================
-   RESET
-   ============================================================ */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ============================================================
-   THEME VARIABLES
-   ============================================================ */
-:root {
-  /* backgrounds */
-  --bg: #080a0e;
-  --panel: #0e1118;
-  --panel2: #131720;
-
-  /* borders */
-  --border: #1e2535;
-  --border2: #2a3347;
-
-  /* text */
-  --text: #b8c4d8;
-  --dim: #4a5568;
-  --bright: #e2e8f4;
-
-  /* status / accent colors */
-  --green: #39d98a;
-  --yellow: #f5c542;
-  --red: #ff4d4d;
-  --blue: #4d9eff;
-  --cyan: #00d4ff;
-  --purple: #9b7fff;
-  --orange: #ff8c42;
-
-  /* fonts */
-  --mono: 'Share Tech Mono', monospace;
-  --sans: 'Barlow', sans-serif;
-}
-
-html,
-body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  overflow: hidden;
-}
-
-/* subtle CRT scanline overlay across the whole screen */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, .05) 2px,
-    rgba(0, 0, 0, .05) 4px
-  );
-}
-
-/* ============================================================
-   ROOT LAYOUT
-   ============================================================ */
-#root {
-  display: grid;
-  grid-template-rows: 48px 1fr;
-  height: 100vh;
-}
-
-/* ============================================================
-   TOP BAR
-   ============================================================ */
-#topbar {
-  display: flex;
-  align-items: center;
-  padding: 0 18px;
-  gap: 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  z-index: 10;
-}
-
-.logo {
-  font-family: var(--mono);
-  font-size: 14px;
-  color: var(--cyan);
-  letter-spacing: 3px;
-  white-space: nowrap;
-}
-.logo em {
-  color: var(--dim);
-  font-style: normal;
-}
-
-.sep {
-  width: 1px;
-  height: 18px;
-  background: var(--border2);
-  flex-shrink: 0;
-}
-
-.tb-stat {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-family: var(--mono);
-}
-.tb-lbl { color: var(--dim); }
-.tb-val { color: var(--bright); }
-.tb-val.g { color: var(--green); }
-.tb-val.y { color: var(--yellow); }
-.tb-val.r { color: var(--red); }
-
-.spacer { flex: 1; }
-
-.ws-pill {
-  font-size: 10px;
-  font-family: var(--mono);
-  padding: 3px 9px;
-  border-radius: 2px;
-  border: 1px solid var(--border2);
-  color: var(--dim);
-  transition: all .3s;
-}
-.ws-pill.on {
-  color: var(--green);
-  border-color: var(--green);
-  text-shadow: 0 0 8px var(--green);
-}
-.ws-pill.off {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-/* ============================================================
-   MAIN GRID  (sidebar | center | right rail)
-   ============================================================ */
-#main {
-  display: grid;
-  grid-template-columns: 230px 1fr 290px;
-  overflow: hidden;
-}
-
-/* ============================================================
-   GENERIC PANEL (shared by sidebar / process wrap / chat / hw)
-   ============================================================ */
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* panel header */
-.ph {
-  padding: 9px 13px;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--dim);
-  text-transform: uppercase;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.ph .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-.ph .badge {
-  margin-left: auto;
-  color: var(--bright);
-  background: var(--panel2);
-  padding: 1px 6px;
-  border-radius: 2px;
-  font-size: 10px;
-}
-
-/* ============================================================
-   LEFT: CLIENT LIST
-   ============================================================ */
-#sidebar {
-  grid-column: 1;
-  border-right: 1px solid var(--border);
-}
-
-#client-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 6px;
-}
-
-/* client card */
-.cc {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  margin-bottom: 6px;
-  padding: 9px 11px;
-  cursor: pointer;
-  transition: border-color .2s;
-}
-.cc:hover,
-.cc.sel {
-  border-color: var(--cyan);
-}
-.cc.sel {
-  background: #0c1820;
-}
-
-.cc-top {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 5px;
-}
-.cc-id {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--cyan);
-  font-weight: 700;
-}
-.cc-addr {
-  font-size: 10px;
-  color: var(--dim);
-  font-family: var(--mono);
-}
-
-/* client card resource bars (CPU / RAM / GPU) */
-.cc-bars {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 3px;
-}
-.cc-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.cc-bar-label {
-  font-size: 9px;
-  color: var(--dim);
-  font-family: var(--mono);
-  letter-spacing: 1px;
-}
-.cc-bar-track {
-  height: 4px;
-  background: var(--border2);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.cc-bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width .5s ease;
-}
-.cc-bar-val {
-  font-size: 10px;
-  font-family: var(--mono);
-}
-
-/* ============================================================
-   CENTER COLUMN (gauges + process table)
-   ============================================================ */
-#center {
-  grid-column: 2;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-}
-
-/* -------- gauges row -------- */
-#gauges {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--border);
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-}
-.gc {
-  background: var(--panel);
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-.gc-lbl {
-  font-size: 9px;
-  font-family: var(--mono);
-  letter-spacing: 2px;
-  color: var(--dim);
-  text-transform: uppercase;
-}
-.gc-sub {
-  font-size: 9px;
-  font-family: var(--mono);
-  color: var(--dim);
-}
-
-/* circular gauge ring */
-.ring {
-  position: relative;
-  width: 62px;
-  height: 62px;
-}
-.ring svg {
-  transform: rotate(-90deg);
-}
-.ring .tr {
-  fill: none;
-  stroke: var(--border2);
-  stroke-width: 5;
-}
-.ring .fi {
-  fill: none;
-  stroke-width: 5;
-  stroke-linecap: round;
-  transition: stroke-dashoffset .6s ease;
-}
-.ring-val {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--bright);
-}
-
-/* -------- process table -------- */
-#proc-wrap {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border);
-}
-#proc-scroll {
-  flex: 1;
-  overflow-y: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 11px;
-}
-thead th {
-  position: sticky;
-  top: 0;
-  background: var(--panel2);
-  padding: 7px 12px;
-  text-align: left;
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  color: var(--dim);
-  border-bottom: 1px solid var(--border);
-  font-weight: 600;
-}
-tbody tr {
-  border-bottom: 1px solid var(--border);
-  transition: background .1s;
-}
-tbody tr:hover {
-  background: var(--panel2);
-}
-tbody td {
-  padding: 5px 12px;
-}
-td.pid { color: var(--cyan); }
-td.pname { color: var(--text); }
-
-.kill-btn {
-  background: transparent;
-  border: 1px solid var(--border2);
-  color: var(--red);
-  font-family: var(--mono);
-  font-size: 9px;
-  padding: 2px 7px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all .15s;
-}
-.kill-btn:hover {
-  background: rgba(255, 77, 77, .12);
-  border-color: var(--red);
-}
-
-.empty {
-  padding: 24px;
-  text-align: center;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: 11px;
-}
-
-/* ============================================================
-   RIGHT RAIL (chat + hardware + totals)
-   ============================================================ */
-#right {
-  grid-column: 3;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* -------- chat -------- */
-#chat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border-bottom: 1px solid var(--border);
-}
-#chat-log {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-/* one chat message */
-.cm {
-  font-size: 11px;
-  line-height: 1.55;
-  animation: fi .18s ease;
-}
-.cm-from {
-  font-family: var(--mono);
-  font-weight: 700;
-}
-.cm-time {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--dim);
-  margin-left: 5px;
-}
-.cm-text {
-  color: var(--text);
-}
-
-/* system message (connect / disconnect notices) */
-.csys {
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--dim);
-  padding: 3px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  margin: 2px 0;
-}
-
-/* chat toolbar: target selector + input row */
-#chat-tools {
-  padding: 8px 10px;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.ct-row {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.ct-label {
-  font-size: 9px;
-  font-family: var(--mono);
-  color: var(--dim);
-  letter-spacing: 1px;
-  white-space: nowrap;
-}
-select.ct-sel {
-  flex: 1;
-  background: var(--panel2);
-  border: 1px solid var(--border2);
-  color: var(--bright);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 5px 7px;
-  border-radius: 3px;
-  outline: none;
-}
-select.ct-sel:focus {
-  border-color: var(--cyan);
-}
-
-#chat-input {
-  flex: 1;
-  background: var(--panel2);
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  color: var(--bright);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 7px 9px;
-  outline: none;
-}
-#chat-input:focus {
-  border-color: var(--cyan);
-}
-#chat-input::placeholder {
-  color: var(--dim);
-}
-
-#chat-send {
-  background: var(--cyan);
-  border: none;
-  color: #000;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 0 11px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: opacity .2s;
-  white-space: nowrap;
-}
-#chat-send:hover {
-  opacity: .8;
-}
-
-/* -------- hardware panel -------- */
-#hw {
-  height: 170px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-#hw-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 5px 10px;
-}
-.hw-sec {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--cyan);
-  padding: 5px 0 2px;
-  text-transform: uppercase;
-}
-.hw-row {
-  display: flex;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 2px 0;
-  border-bottom: 1px solid var(--border);
-}
-.hw-k {
-  color: var(--dim);
-  min-width: 120px;
-  flex-shrink: 0;
-}
-.hw-v {
-  color: var(--bright);
-  word-break: break-all;
-}
-
-/* -------- totals strip -------- */
-#totals {
-  display: flex;
-  flex-shrink: 0;
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-}
-.tc {
-  flex: 1;
-  padding: 7px 11px;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.tc:last-child {
-  border-right: none;
-}
-.tc-lbl {
-  font-size: 9px;
-  font-family: var(--mono);
-  letter-spacing: 1.5px;
-  color: var(--dim);
-  text-transform: uppercase;
-}
-.tc-val {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--yellow);
-}
-
-/* ============================================================
-   SCROLLBARS
-   ============================================================ */
-::-webkit-scrollbar {
-  width: 3px;
-  height: 3px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border2);
-  border-radius: 2px;
-}
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border2) transparent;
-}
-
-/* ============================================================
-   ANIMATIONS
-   ============================================================ */
-@keyframes fi {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: .3; }
-}
-
+  :root {
+    /* mirrors the tailwind palette above, kept as CSS vars for JS-driven inline colors */
+    --border: #E5E2D3;
+    --border2: #D6D1BC;
+    --ink: #43483C;
+    --green: #4C9A5F;
+    --yellow: #E0A63C;
+    --red: #DE5B4C;
+    --blue: #4A85D1;
+    --cyan: #2FA192;
+    --purple: #8874CE;
+    --orange: #DD8A45;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+  * { scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
 </style>
 </head>
-<body>
-<div id="root">
+<body class="h-screen overflow-hidden bg-bg text-ink font-sans antialiased">
+<div id="root" class="grid grid-rows-[auto_1fr] h-full">
 
   <!-- TOP BAR -->
-  <div id="topbar">
-    <div class="logo">Carbonpulse</div>
-    <div class="sep"></div>
+  <div id="topbar" class="flex items-center gap-4 px-5 h-16 bg-panel border-b border-border shadow-sm z-10 overflow-x-auto">
+    <div class="flex items-center gap-2 shrink-0">
+      <svg class="w-4 h-4 text-life animate-drift shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2c-4 4-8 8-8 13a8 8 0 0 0 16 0c0-5-4-9-8-13Zm0 3.2c2.9 3 5.5 6 5.5 9.8a5.5 5.5 0 0 1-11 0c0-3.8 2.6-6.8 5.5-9.8Z"/>
+      </svg>
+      <span class="font-display text-xl font-semibold text-bright tracking-tight">CarbonPulse</span>
+    </div>
+    <div class="w-px h-5 bg-border2 shrink-0"></div>
 
-    <div class="tb-stat"><span class="tb-lbl">CLIENTS</span><span class="tb-val g" id="tb-cl">0</span></div>
-    <div class="sep"></div>
+    <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
+      <span class="text-dim uppercase tracking-wide">Clients</span>
+      <span class="text-life font-semibold" id="tb-cl">0</span>
+    </div>
+    <div class="w-px h-5 bg-border2 shrink-0"></div>
 
-    <div class="tb-stat"><span class="tb-lbl">POWER</span><span class="tb-val y" id="tb-pw">0 W</span></div>
-    <div class="sep"></div>
+    <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
+      <span class="text-dim uppercase tracking-wide">Power</span>
+      <span class="text-sun font-semibold" id="tb-pw">0 W</span>
+    </div>
+    <div class="w-px h-5 bg-border2 shrink-0"></div>
 
-    <div class="tb-stat"><span class="tb-lbl">CO₂</span><span class="tb-val" id="tb-co">0.0000 g</span></div>
-    <div class="sep"></div>
+    <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
+      <span class="text-dim uppercase tracking-wide">CO₂</span>
+      <span class="text-bright font-semibold" id="tb-co">0.0000 g</span>
+    </div>
+    <div class="w-px h-5 bg-border2 shrink-0"></div>
 
-    <div class="tb-stat"><span class="tb-lbl">TIME</span><span class="tb-val" id="tb-tm">--:--:--</span></div>
+    <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
+      <span class="text-dim uppercase tracking-wide">Time</span>
+      <span class="text-bright font-semibold" id="tb-tm">--:--:--</span>
+    </div>
 
-    <div class="spacer"></div>
-    <div class="ws-pill off" id="ws-pill">● DISCONNECTED</div>
+    <div class="flex-1 min-w-4"></div>
+    <div id="ws-pill" class="font-mono text-[12px] tracking-wide px-3 py-1 rounded-full border shrink-0 transition-all duration-300 text-coral border-coral bg-coral/10">● DISCONNECTED</div>
   </div>
 
   <!-- MAIN -->
-  <div id="main">
+  <div id="main" class="grid grid-cols-1 lg:grid-cols-[240px_1fr_300px] overflow-hidden">
 
     <!-- LEFT: client list -->
-    <div class="panel" id="sidebar">
-      <div class="ph">
-        <span class="dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>
-        CLIENTS
-        <span class="badge" id="cl-cnt">0</span>
+    <div id="sidebar" class="hidden lg:flex flex-col overflow-hidden bg-panel border-r border-border">
+      <div class="flex items-center gap-2 px-3.5 py-2.5 border-b border-border font-mono text-[12px] tracking-wide uppercase text-dim shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-jade shadow-[0_0_6px_rgba(47,161,146,.6)]"></span>
+        Clients
+        <span class="ml-auto text-bright bg-panel2 px-1.5 py-0.5 rounded-md text-[12px] normal-case tracking-normal" id="cl-cnt">0</span>
       </div>
-      <div id="client-list"><div class="empty">No clients connected</div></div>
+      <div id="client-list" class="flex-1 overflow-y-auto p-2">
+        <div class="p-6 text-center text-dim font-mono text-[13px]">No clients connected</div>
+      </div>
     </div>
 
     <!-- CENTER: gauges + process table -->
-    <div id="center">
+    <div id="center" class="flex flex-col overflow-hidden border-x border-border">
 
-      <div id="gauges">
-        <div class="gc">
-          <div class="gc-lbl">CPU</div>
-          <div class="ring">
-            <svg viewBox="0 0 62 62">
-              <circle class="tr" cx="31" cy="31" r="26"/>
-              <circle class="fi" id="g-cpu" cx="31" cy="31" r="26" stroke="var(--blue)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+      <div id="gauges" class="grid grid-cols-5 gap-px bg-border border-b border-border shrink-0">
+        <div class="bg-panel flex flex-col items-center gap-1.5 py-4 px-2">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">CPU</div>
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 62 62" class="-rotate-90 w-16 h-16">
+              <circle cx="31" cy="31" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle id="g-cpu" cx="31" cy="31" r="26" fill="none" stroke="var(--blue)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" class="transition-[stroke-dashoffset] duration-500 ease-out"/>
             </svg>
-            <div class="ring-val" id="v-cpu">0%</div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-bright" id="v-cpu">0%</div>
           </div>
         </div>
 
-        <div class="gc">
-          <div class="gc-lbl">RAM</div>
-          <div class="ring">
-            <svg viewBox="0 0 62 62">
-              <circle class="tr" cx="31" cy="31" r="26"/>
-              <circle class="fi" id="g-ram" cx="31" cy="31" r="26" stroke="var(--purple)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+        <div class="bg-panel flex flex-col items-center gap-1.5 py-4 px-2">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">RAM</div>
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 62 62" class="-rotate-90 w-16 h-16">
+              <circle cx="31" cy="31" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle id="g-ram" cx="31" cy="31" r="26" fill="none" stroke="var(--purple)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" class="transition-[stroke-dashoffset] duration-500 ease-out"/>
             </svg>
-            <div class="ring-val" id="v-ram">0%</div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-bright" id="v-ram">0%</div>
           </div>
         </div>
 
-        <div class="gc">
-          <div class="gc-lbl">GPU</div>
-          <div class="ring">
-            <svg viewBox="0 0 62 62">
-              <circle class="tr" cx="31" cy="31" r="26"/>
-              <circle class="fi" id="g-gpu" cx="31" cy="31" r="26" stroke="var(--orange)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+        <div class="bg-panel flex flex-col items-center gap-1.5 py-4 px-2">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">GPU</div>
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 62 62" class="-rotate-90 w-16 h-16">
+              <circle cx="31" cy="31" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle id="g-gpu" cx="31" cy="31" r="26" fill="none" stroke="var(--orange)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" class="transition-[stroke-dashoffset] duration-500 ease-out"/>
             </svg>
-            <div class="ring-val" id="v-gpu">0%</div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-bright" id="v-gpu">0%</div>
           </div>
         </div>
 
-        <div class="gc">
-          <div class="gc-lbl">POWER</div>
-          <div class="ring">
-            <svg viewBox="0 0 62 62">
-              <circle class="tr" cx="31" cy="31" r="26"/>
-              <circle class="fi" id="g-pwr" cx="31" cy="31" r="26" stroke="var(--yellow)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+        <div class="bg-panel flex flex-col items-center gap-1.5 py-4 px-2">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">Power</div>
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 62 62" class="-rotate-90 w-16 h-16">
+              <circle cx="31" cy="31" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle id="g-pwr" cx="31" cy="31" r="26" fill="none" stroke="var(--yellow)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" class="transition-[stroke-dashoffset] duration-500 ease-out"/>
             </svg>
-            <div class="ring-val" id="v-pwr">0W</div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-bright" id="v-pwr">0W</div>
           </div>
-          <div class="gc-sub">max 200W</div>
         </div>
 
-        <div class="gc">
-          <div class="gc-lbl">CO₂/s</div>
-          <div class="ring">
-            <svg viewBox="0 0 62 62">
-              <circle class="tr" cx="31" cy="31" r="26"/>
-              <circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+        <div class="bg-panel flex flex-col items-center gap-1.5 py-4 px-2">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">CO₂/s</div>
+          <div class="relative w-16 h-16">
+            <svg viewBox="0 0 62 62" class="-rotate-90 w-16 h-16">
+              <circle cx="31" cy="31" r="26" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle id="g-co2" cx="31" cy="31" r="26" fill="none" stroke="var(--green)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" class="transition-[stroke-dashoffset] duration-500 ease-out"/>
             </svg>
-            <div class="ring-val" id="v-co2" style="font-size:9px">0g</div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-bold text-bright" id="v-co2">0g</div>
           </div>
-          <div class="gc-sub">per sec</div>
         </div>
       </div>
 
-      <div id="proc-wrap" class="panel" style="border:none">
-        <div class="ph">
-          <span class="dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></span>
-          PROCESSES &mdash;
-          <span id="proc-lbl" style="color:var(--bright);margin-left:4px">select a client</span>
-          <span class="badge" id="proc-cnt">0</span>
+      <div id="proc-wrap" class="flex-1 overflow-hidden flex flex-col">
+        <div class="flex items-center gap-2 px-3.5 py-2.5 border-b border-border font-mono text-[12px] tracking-wide uppercase text-dim shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-life shadow-[0_0_6px_rgba(76,154,95,.6)]"></span>
+          Processes &mdash;
+          <span id="proc-lbl" class="text-bright normal-case tracking-normal">select a client</span>
+          <span class="ml-auto text-bright bg-panel2 px-1.5 py-0.5 rounded-md text-[12px] normal-case tracking-normal" id="proc-cnt">0</span>
         </div>
-        <div id="proc-scroll">
-          <div class="empty" id="proc-empty">Select a client on the left</div>
-          <table id="proc-tbl" style="display:none">
+        <div id="proc-scroll" class="flex-1 overflow-y-auto bg-panel">
+          <div class="p-6 text-center text-dim font-mono text-[13px]" id="proc-empty">Select a client on the left</div>
+          <table id="proc-tbl" class="w-full border-collapse font-mono text-[13px]" style="display:none">
             <thead>
               <tr>
-                <th>PID</th>
-                <th>PROCESS NAME</th>
-                <th style="text-align:right;padding-right:10px">ACTION</th>
+                <th class="sticky top-0 bg-panel2 px-3 py-2 text-left text-[11px] tracking-wide text-dim border-b border-border font-semibold">PID</th>
+                <th class="sticky top-0 bg-panel2 px-3 py-2 text-left text-[11px] tracking-wide text-dim border-b border-border font-semibold">PROCESS NAME</th>
+                <th class="sticky top-0 bg-panel2 px-3 py-2 text-right text-[11px] tracking-wide text-dim border-b border-border font-semibold">ACTION</th>
               </tr>
             </thead>
             <tbody id="proc-body"></tbody>
@@ -774,52 +214,54 @@ select.ct-sel:focus {
     </div>
 
     <!-- RIGHT: chat, hardware, totals -->
-    <div id="right">
+    <div id="right" class="hidden lg:flex flex-col overflow-hidden bg-panel">
 
       <!-- CHAT -->
-      <div class="panel" id="chat">
-        <div class="ph">
-          <span class="dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></span>
-          CHAT
+      <div id="chat" class="flex-1 flex flex-col min-h-0 border-b border-border">
+        <div class="flex items-center gap-2 px-3.5 py-2.5 border-b border-border font-mono text-[12px] tracking-wide uppercase text-dim shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-lavender shadow-[0_0_6px_rgba(136,116,206,.6)]"></span>
+          Chat
         </div>
-        <div id="chat-log"></div>
-        <div id="chat-tools">
-          <div class="ct-row">
-            <span class="ct-label">TO</span>
-            <select class="ct-sel" id="chat-target">
+        <div id="chat-log" class="flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-2"></div>
+        <div id="chat-tools" class="p-2.5 border-t border-border flex flex-col gap-1.5 shrink-0">
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-[11px] text-dim tracking-wide whitespace-nowrap">TO</span>
+            <select id="chat-target" class="flex-1 bg-panel2 border border-border2 text-ink font-mono text-[13px] px-2 py-1.5 rounded-lg outline-none focus:border-life focus:ring-2 focus:ring-life/20">
               <option value="all">All Clients (Broadcast)</option>
             </select>
           </div>
-          <div class="ct-row">
-            <input id="chat-input" placeholder="Type message and press Enter…" />
-            <button id="chat-send">SEND</button>
+          <div class="flex items-center gap-1.5">
+            <input id="chat-input" placeholder="Type message and press Enter…" class="flex-1 bg-panel2 border border-border2 rounded-lg text-ink font-mono text-[13px] px-3 py-2 outline-none placeholder:text-dim focus:border-life focus:ring-2 focus:ring-life/20"/>
+            <button id="chat-send" class="bg-life text-white font-mono text-[12px] font-bold px-3 py-2 rounded-lg whitespace-nowrap hover:bg-life/90 transition-colors">SEND</button>
           </div>
         </div>
       </div>
 
       <!-- HARDWARE -->
-      <div class="panel" id="hw">
-        <div class="ph">
-          <span class="dot" style="background:var(--orange);box-shadow:0 0 5px var(--orange)"></span>
-          HARDWARE
-          <span style="margin-left:auto;font-size:9px;color:var(--dim)" id="hw-lbl">no selection</span>
+      <div id="hw" class="h-44 shrink-0 flex flex-col overflow-hidden border-b border-border">
+        <div class="flex items-center gap-2 px-3.5 py-2.5 border-b border-border font-mono text-[12px] tracking-wide uppercase text-dim shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-clay shadow-[0_0_6px_rgba(221,138,69,.6)]"></span>
+          Hardware
+          <span class="ml-auto font-mono text-[11px] text-dim normal-case tracking-normal" id="hw-lbl">no selection</span>
         </div>
-        <div id="hw-scroll"><div class="empty">Select a client</div></div>
+        <div id="hw-scroll" class="flex-1 overflow-y-auto px-3 py-1.5">
+          <div class="p-6 text-center text-dim font-mono text-[13px]">Select a client</div>
+        </div>
       </div>
 
       <!-- TOTALS -->
-      <div id="totals">
-        <div class="tc">
-          <div class="tc-lbl" id="tot-pw-lbl">Total Power</div>
-          <div class="tc-val" id="tot-pw">0 W</div>
+      <div id="totals" class="flex shrink-0 bg-panel2">
+        <div class="flex-1 px-3 py-2 border-r border-border flex flex-col gap-0.5">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase" id="tot-pw-lbl">Total Power</div>
+          <div class="font-mono text-[15px] font-bold text-sun" id="tot-pw">0 W</div>
         </div>
-        <div class="tc">
-          <div class="tc-lbl" id="tot-co-lbl">Total CO₂</div>
-          <div class="tc-val" id="tot-co">0.0000 g</div>
+        <div class="flex-1 px-3 py-2 border-r border-border flex flex-col gap-0.5">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase" id="tot-co-lbl">Total CO₂</div>
+          <div class="font-mono text-[15px] font-bold text-sun" id="tot-co">0.0000 g</div>
         </div>
-        <div class="tc">
-          <div class="tc-lbl">Clients</div>
-          <div class="tc-val" id="tot-cl">0</div>
+        <div class="flex-1 px-3 py-2 flex flex-col gap-0.5">
+          <div class="font-mono text-[11px] tracking-wide text-dim uppercase">Clients</div>
+          <div class="font-mono text-[15px] font-bold text-sun" id="tot-cl">0</div>
         </div>
       </div>
     </div>
@@ -878,7 +320,8 @@ function connect() {
 function setPill(isConnected) {
   const pill = document.getElementById('ws-pill');
   pill.textContent = isConnected ? '● CONNECTED' : '● DISCONNECTED';
-  pill.className   = 'ws-pill ' + (isConnected ? 'on' : 'off');
+  pill.className = 'font-mono text-[12px] tracking-wide px-3 py-1 rounded-full border shrink-0 transition-all duration-300 '
+    + (isConnected ? 'text-life border-life bg-life-light' : 'text-coral border-coral bg-coral/10');
 }
 
 // Send a JSON payload over the socket, but only if it's actually open.
@@ -990,7 +433,7 @@ function renderClients() {
   rebuildChatTargetDropdown();
 
   if (!count) {
-    listEl.innerHTML = '<div class="empty">No clients connected</div>';
+    listEl.innerHTML = '<div class="p-6 text-center text-dim font-mono text-[13px]">No clients connected</div>';
     return;
   }
 
@@ -1006,15 +449,19 @@ function buildClientCard(client) {
   const cpu = metrics.cpu || 0;
   const ram = metrics.ram || 0;
   const gpu = metrics.gpu || 0;
+  const isSel = client.cid === selCid;
 
   const card = document.createElement('div');
-  card.className = 'cc' + (client.cid === selCid ? ' sel' : '');
+  card.className = 'rounded-2xl border p-3 mb-2 cursor-pointer transition-all duration-200 '
+    + (isSel
+      ? 'border-life bg-life-light shadow-sm'
+      : 'border-border bg-panel hover:border-life/60 hover:shadow-sm');
   card.innerHTML = `
-    <div class="cc-top">
-      <span class="cc-id">CLIENT #${client.cid}</span>
-      <span class="cc-addr">${client.addr}</span>
+    <div class="flex items-center gap-2 mb-2">
+      <span class="font-mono text-xs font-bold text-jade">CLIENT #${client.cid}</span>
+      <span class="font-mono text-[12px] text-dim truncate">${client.addr}</span>
     </div>
-    <div class="cc-bars">
+    <div class="grid grid-cols-3 gap-2">
       ${bar('CPU', cpu, 'var(--blue)')}
       ${bar('RAM', ram, 'var(--purple)')}
       ${bar('GPU', gpu, 'var(--orange)')}
@@ -1027,12 +474,12 @@ function buildClientCard(client) {
 // Small resource-bar markup used inside each client card.
 function bar(label, pct, color) {
   return `
-    <div class="cc-bar">
-      <div class="cc-bar-label">${label}</div>
-      <div class="cc-bar-track">
-        <div class="cc-bar-fill" style="width:${pct}%;background:${color}"></div>
+    <div class="flex flex-col gap-1">
+      <div class="font-mono text-[10px] tracking-wide text-dim uppercase">${label}</div>
+      <div class="h-1 rounded-full bg-border2 overflow-hidden">
+        <div class="h-full rounded-full transition-[width] duration-500 ease-out" style="width:${pct}%;background:${color}"></div>
       </div>
-      <div class="cc-bar-val" style="color:${color}">${pct}%</div>
+      <div class="font-mono text-[12px] font-semibold" style="color:${color}">${pct}%</div>
     </div>`;
 }
 
@@ -1104,11 +551,12 @@ function renderProcs(processes, cid) {
 
   processes.forEach(proc => {
     const row = document.createElement('tr');
+    row.className = 'border-b border-border hover:bg-panel2 transition-colors';
     row.innerHTML = `
-      <td class="pid">${proc.pid}</td>
-      <td class="pname">${esc(proc.name)}</td>
-      <td style="text-align:right;padding-right:10px">
-        <button class="kill-btn" data-cid="${cid}" data-pid="${proc.pid}">KILL</button>
+      <td class="px-3 py-2 text-jade">${proc.pid}</td>
+      <td class="px-3 py-2 text-ink">${esc(proc.name)}</td>
+      <td class="px-3 py-2 text-right">
+        <button class="kill-btn font-mono text-[11px] px-2 py-1 rounded-md border border-border2 text-coral hover:bg-coral/10 hover:border-coral transition-colors" data-cid="${cid}" data-pid="${proc.pid}">KILL</button>
       </td>`;
     tbody.appendChild(row);
   });
@@ -1145,7 +593,7 @@ function renderHw(hardwareList) {
   const el = document.getElementById('hw-scroll');
 
   if (!hardwareList?.length) {
-    el.innerHTML = '<div class="empty">No hardware data</div>';
+    el.innerHTML = '<div class="p-6 text-center text-dim font-mono text-[13px]">No hardware data</div>';
     return;
   }
 
@@ -1159,7 +607,7 @@ function renderHw(hardwareList) {
 // Section header for one hardware device (e.g. "CPU", "GPU").
 function buildHwSectionHeader(item) {
   const header = document.createElement('div');
-  header.className = 'hw-sec';
+  header.className = 'font-mono text-[11px] tracking-wide text-jade uppercase pt-2 pb-1';
   header.textContent = item.type || 'DEVICE';
   return header;
 }
@@ -1171,8 +619,8 @@ function buildHwRows(item) {
     .filter(([key]) => key !== 'type')
     .map(([key, value]) => {
       const row = document.createElement('div');
-      row.className = 'hw-row';
-      row.innerHTML = `<span class="hw-k">${esc(key)}</span><span class="hw-v">${esc(String(value ?? ''))}</span>`;
+      row.className = 'flex gap-1.5 font-mono text-[12px] py-1 border-b border-border';
+      row.innerHTML = `<span class="text-dim min-w-[120px] shrink-0">${esc(key)}</span><span class="text-bright break-all">${esc(String(value ?? ''))}</span>`;
       return row;
     });
 }
@@ -1234,13 +682,13 @@ const chatLog = document.getElementById('chat-log');
 // Also trims the log to the most recent 300 messages.
 function appendChat(msg) {
   const div = document.createElement('div');
-  div.className = 'cm';
+  div.className = 'animate-fadeUp text-[13px] leading-relaxed';
 
   const privateTag = msg.private ? ` → #${msg.to}` : '';
   div.innerHTML =
-    `<span class="cm-from" style="color:${msg.color || '#b8c4d8'}">#${msg.from}${privateTag}</span>` +
-    `<span class="cm-time">${msg.ts || ''}</span><br>` +
-    `<span class="cm-text">${esc(msg.text || '')}</span>`;
+    `<span class="font-mono font-bold" style="color:${msg.color || 'var(--ink)'}">#${msg.from}${privateTag}</span>` +
+    `<span class="font-mono text-[11px] text-dim ml-1.5">${msg.ts || ''}</span><br>` +
+    `<span class="text-ink">${esc(msg.text || '')}</span>`;
 
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -1253,7 +701,7 @@ function appendChat(msg) {
 // Append a centered system notice (connect/disconnect, etc).
 function sysMsg(text) {
   const div = document.createElement('div');
-  div.className = 'csys';
+  div.className = 'text-center font-mono text-[12px] text-dim py-1 border-y border-border my-0.5';
   div.textContent = text;
 
   chatLog.appendChild(div);
