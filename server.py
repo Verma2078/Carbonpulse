@@ -13,6 +13,7 @@ Ports:
 Requirements:
   pip install websockets
 """
+ipppp="127.0.0.1"
 
 import asyncio
 import json
@@ -357,10 +358,10 @@ async def hard_info_server(reader, writer):
 # ── Main ──────────────────────────────────────────────────────────────
 
 async def main():
-    msg_srv  = await asyncio.start_server(handle_client,    "0.0.0.0", 9000)
-    data_srv = await asyncio.start_server(data_server,      "0.0.0.0", 8000)
-    hw_srv   = await asyncio.start_server(hard_info_server, "0.0.0.0", 8888)
-    ws_srv   = await websockets.serve(ws_handler,           "0.0.0.0", 9999)
+    msg_srv  = await asyncio.start_server(handle_client,    ipppp, 9000)
+    data_srv = await asyncio.start_server(data_server,      ipppp, 8000)
+    hw_srv   = await asyncio.start_server(hard_info_server, ipppp, 8888)
+    ws_srv   = await websockets.serve(ws_handler,           ipppp, 9999)
 
     await asyncio.gather(
         msg_srv.serve_forever(),
