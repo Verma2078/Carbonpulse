@@ -22,7 +22,7 @@ SERVER_IP     = "127.0.0.1"   # ← change to server IP if remote
 MSG_PORT      = 9000
 DATA_PORT     = 8000
 HARD_PORT     = 8888
-RECONNECT_SEC = 5
+RECONNECT_SEC = 3
 
 
 # ── Process kill (Windows) ────────────────────────────────────────────
