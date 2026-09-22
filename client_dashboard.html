@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carbonpulse — Client View</title>
+<title>CarbonPulse — Client View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link
-  href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700;900&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
   rel="stylesheet"
 >
 <style>
@@ -22,33 +23,35 @@
 
   :root {
     /* backgrounds */
-    --bg: #080a0e;
-    --panel: #0e1118;
-    --panel2: #131720;
+    --bg: #F7F6EF;
+    --panel: #FFFFFF;
+    --panel2: #F0EFE3;
 
     /* borders */
-    --border: #1e2535;
-    --border2: #2a3347;
+    --border: #E5E2D3;
+    --border2: #D6D1BC;
 
     /* text */
-    --text: #b8c4d8;
-    --dim: #4a5568;
-    --bright: #e2e8f4;
+    --text: #43483C;
+    --dim: #6E7263;
+    --bright: #20241C;
 
     /* status colors */
-    --green: #39d98a;
-    --yellow: #f5c542;
-    --red: #ff4d4d;
+    --green: #4C9A5F;
+    --green-light: #E3F1E4;
+    --yellow: #E0A63C;
+    --red: #DE5B4C;
 
     /* accent colors */
-    --blue: #4d9eff;
-    --cyan: #00d4ff;
-    --purple: #9b7fff;
-    --orange: #ff8c42;
+    --blue: #4A85D1;
+    --cyan: #2FA192;
+    --purple: #8874CE;
+    --orange: #DD8A45;
 
     /* fonts */
-    --mono: 'Share Tech Mono', monospace;
-    --sans: 'Barlow', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --display: 'Fraunces', serif;
   }
 
   html, body {
@@ -57,20 +60,6 @@
     color: var(--text);
     font-family: var(--sans);
     overflow: hidden;
-  }
-
-  /* subtle scanline overlay across the whole viewport */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 999;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent, transparent 2px,
-      rgba(0, 0, 0, .05) 2px, rgba(0, 0, 0, .05) 4px
-    );
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -98,10 +87,11 @@
   }
 
   .logo {
-    font-family: var(--mono);
-    font-size: 14px;
-    color: var(--orange);
-    letter-spacing: 3px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 21px;
+    color: var(--bright);
+    letter-spacing: -0.01em;
     white-space: nowrap;
   }
   .logo em {
@@ -109,10 +99,13 @@
     font-style: normal;
   }
   .logo span {
-    color: var(--cyan);
-    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--dim);
+    font-size: 13px;
     margin-left: 8px;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
   }
 
   .sep {
@@ -126,7 +119,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: 13px;
     font-family: var(--mono);
   }
   .tb-lbl { color: var(--dim); }
@@ -139,10 +132,11 @@
   .spacer { flex: 1; }
 
   .ws-pill {
-    font-size: 10px;
+    font-size: 14px;
     font-family: var(--mono);
-    padding: 3px 9px;
-    border-radius: 2px;
+    letter-spacing: .02em;
+    padding: 4px 12px;
+    border-radius: 999px;
     border: 1px solid var(--border2);
     color: var(--dim);
     transition: all .3s;
@@ -150,11 +144,12 @@
   .ws-pill.on {
     color: var(--green);
     border-color: var(--green);
-    text-shadow: 0 0 8px var(--green);
+    background: var(--green-light);
   }
   .ws-pill.off {
     color: var(--red);
     border-color: var(--red);
+    background: rgba(222, 91, 76, .1);
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -184,7 +179,7 @@
     padding: 9px 13px;
     border-bottom: 1px solid var(--border);
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 2px;
     color: var(--dim);
     text-transform: uppercase;
@@ -203,8 +198,8 @@
     color: var(--bright);
     background: var(--panel2);
     padding: 1px 6px;
-    border-radius: 2px;
-    font-size: 10px;
+    border-radius: 6px;
+    font-size: 12px;
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -236,14 +231,14 @@
     gap: 5px;
   }
   .gc-lbl {
-    font-size: 9px;
+    font-size: 11px;
     font-family: var(--mono);
     letter-spacing: 2px;
     color: var(--dim);
     text-transform: uppercase;
   }
   .gc-sub {
-    font-size: 9px;
+    font-size: 11px;
     font-family: var(--mono);
     color: var(--dim);
   }
@@ -272,7 +267,7 @@
     align-items: center;
     justify-content: center;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--bright);
   }
@@ -293,7 +288,7 @@
     width: 100%;
     border-collapse: collapse;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
   }
   thead th {
     position: sticky;
@@ -301,7 +296,7 @@
     background: var(--panel2);
     padding: 7px 12px;
     text-align: left;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 1.5px;
     color: var(--dim);
     border-bottom: 1px solid var(--border);
@@ -316,30 +311,15 @@
 
   td.pid { color: var(--cyan); }
   td.pname { color: var(--text); }
-  td.pstat { font-size: 10px; }
+  td.pstat { font-size: 12px; }
 
   .empty {
     padding: 24px;
     text-align: center;
     color: var(--dim);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
   }
-
-  /* -- process search bar -- */
-  #proc-search {
-    width: 100%;
-    background: var(--panel2);
-    border: none;
-    border-bottom: 1px solid var(--border);
-    color: var(--bright);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 7px 12px;
-    outline: none;
-  }
-  #proc-search::placeholder { color: var(--dim); }
-  #proc-search:focus { border-bottom-color: var(--cyan); }
 
   /* ══════════════════════════════════════════════════════════════════
      RIGHT SIDEBAR
@@ -368,14 +348,14 @@
   }
 
   .cm {
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.55;
     animation: fadeIn .18s ease;
   }
   .cm-from { font-family: var(--mono); font-weight: 700; }
   .cm-time {
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 11px;
     color: var(--dim);
     margin-left: 5px;
   }
@@ -385,7 +365,7 @@
   .csys {
     text-align: center;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 12px;
     color: var(--dim);
     padding: 3px 0;
     border-top: 1px solid var(--border);
@@ -404,30 +384,33 @@
     flex: 1;
     background: var(--panel2);
     border: 1px solid var(--border2);
-    border-radius: 3px;
+    border-radius: 8px;
     color: var(--bright);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     padding: 7px 9px;
     outline: none;
   }
-  #msg-input:focus { border-color: var(--cyan); }
+  #msg-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(76, 154, 95, .15);
+  }
   #msg-input::placeholder { color: var(--dim); }
 
   #msg-send {
-    background: var(--cyan);
+    background: var(--green);
     border: none;
-    color: #000;
+    color: #fff;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     padding: 0 11px;
-    border-radius: 3px;
+    border-radius: 8px;
     cursor: pointer;
     transition: opacity .2s;
     white-space: nowrap;
   }
-  #msg-send:hover { opacity: .8; }
+  #msg-send:hover { opacity: .9; }
 
   /* -- hardware panel -- */
   #hw {
@@ -437,6 +420,7 @@
     flex-direction: column;
     overflow: hidden;
     border-top: 1px solid var(--border);
+    background: var(--panel);
   }
   #hw-scroll {
     flex: 1;
@@ -444,7 +428,7 @@
     padding: 5px 10px;
   }
   .hw-sec {
-    font-size: 9px;
+    font-size: 13px;
     letter-spacing: 2px;
     color: var(--orange);
     padding: 5px 0 2px;
@@ -454,8 +438,8 @@
     display: flex;
     gap: 5px;
     font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 0;
+    font-size: 14px;
+    padding: 3px 0;
     border-bottom: 1px solid var(--border);
   }
   .hw-k {
@@ -473,19 +457,19 @@
     display: flex;
     flex-shrink: 0;
     border-top: 1px solid var(--border);
-    background: var(--panel);
+    background: var(--bg);
   }
   .sc {
     flex: 1;
-    padding: 7px 11px;
+    padding: 9px 11px;
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
   }
   .sc:last-child { border-right: none; }
   .sc-lbl {
-    font-size: 9px;
+    font-size: 13px;
     font-family: var(--mono);
     letter-spacing: 1.5px;
     color: var(--dim);
@@ -493,7 +477,7 @@
   }
   .sc-val {
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 19px;
     font-weight: 700;
     color: var(--yellow);
   }
@@ -505,7 +489,7 @@
   #setup {
     position: fixed;
     inset: 0;
-    background: rgba(8, 10, 14, .95);
+    background: rgba(247, 246, 239, .97);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -514,14 +498,15 @@
     gap: 16px;
   }
   #setup h2 {
-    font-family: var(--mono);
-    color: var(--cyan);
-    font-size: 18px;
-    letter-spacing: 4px;
+    font-family: var(--display);
+    font-weight: 600;
+    color: var(--bright);
+    font-size: 26px;
+    letter-spacing: -0.01em;
   }
   #setup p {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--dim);
     text-align: center;
     max-width: 340px;
@@ -533,44 +518,50 @@
     gap: 8px;
   }
   #cid-input {
-    background: var(--panel2);
+    background: var(--panel);
     border: 1px solid var(--border2);
     color: var(--bright);
     font-family: var(--mono);
-    font-size: 14px;
+    font-size: 16px;
     padding: 8px 14px;
-    border-radius: 3px;
+    border-radius: 8px;
     outline: none;
     width: 120px;
     text-align: center;
   }
-  #cid-input:focus { border-color: var(--cyan); }
+  #cid-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(76, 154, 95, .15);
+  }
 
   #cid-btn {
-    background: var(--cyan);
+    background: var(--green);
     border: none;
-    color: #000;
+    color: #fff;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     padding: 0 18px;
-    border-radius: 3px;
+    border-radius: 8px;
     cursor: pointer;
   }
 
   #setup-ws {
-    background: var(--panel2);
+    background: var(--panel);
     border: 1px solid var(--border2);
     color: var(--bright);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     padding: 7px 12px;
-    border-radius: 3px;
+    border-radius: 8px;
     outline: none;
     width: 260px;
     text-align: center;
   }
-  #setup-ws:focus { border-color: var(--cyan); }
+  #setup-ws:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(76, 154, 95, .15);
+  }
 
   /* ══════════════════════════════════════════════════════════════════
      SCROLLBARS
@@ -605,7 +596,7 @@
       Enter the WebSocket server address and your Client ID.<br>
       Your CID is shown in the server dashboard when you connect.
     </p>
-    <input id="setup-ws" value="ws://127.0.0.1:9999" placeholder="ws://SERVER_IP:9999">
+    <input id="setup-ws" value="ws://10.119.76.144:9999" placeholder="ws://SERVER_IP:9999">
     <div class="setup-row">
       <input id="cid-input" type="number" min="1" placeholder="CID">
       <button id="cid-btn">CONNECT</button>
@@ -624,30 +615,6 @@
       <div class="tb-stat">
         <span class="tb-lbl">MY CID</span>
         <span class="tb-val b" id="tb-cid">—</span>
-      </div>
-      <div class="sep"></div>
-
-      <div class="tb-stat">
-        <span class="tb-lbl">CPU</span>
-        <span class="tb-val g" id="tb-cpu">0%</span>
-      </div>
-      <div class="sep"></div>
-
-      <div class="tb-stat">
-        <span class="tb-lbl">RAM</span>
-        <span class="tb-val" id="tb-ram">0%</span>
-      </div>
-      <div class="sep"></div>
-
-      <div class="tb-stat">
-        <span class="tb-lbl">GPU</span>
-        <span class="tb-val y" id="tb-gpu">0%</span>
-      </div>
-      <div class="sep"></div>
-
-      <div class="tb-stat">
-        <span class="tb-lbl">POWER</span>
-        <span class="tb-val y" id="tb-pwr">0 W</span>
       </div>
       <div class="sep"></div>
 
@@ -713,7 +680,6 @@
               </svg>
               <div class="ring-val" id="v-pwr">0W</div>
             </div>
-            <div class="gc-sub">max 200W</div>
           </div>
 
           <div class="gc">
@@ -723,9 +689,8 @@
                 <circle class="tr" cx="31" cy="31" r="26"/>
                 <circle class="fi" id="g-co2" cx="31" cy="31" r="26" stroke="var(--green)" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
               </svg>
-              <div class="ring-val" id="v-co2" style="font-size:9px">0g</div>
+              <div class="ring-val" id="v-co2" style="font-size:11px">0g</div>
             </div>
-            <div class="gc-sub">per sec</div>
           </div>
 
         </div>
@@ -737,7 +702,6 @@
             MY PROCESSES
             <span class="badge" id="proc-cnt">0</span>
           </div>
-          <input id="proc-search" placeholder="Filter processes…">
           <div id="proc-scroll">
             <div class="empty" id="proc-empty">Waiting for data…</div>
             <table id="proc-tbl" style="display:none">
@@ -765,8 +729,8 @@
 
           <div class="msg-toolbar" style="flex-direction:column;gap:6px">
             <div style="display:flex;gap:6px;align-items:center">
-              <span style="font-size:9px;font-family:var(--mono);color:var(--dim);white-space:nowrap;letter-spacing:1px">TO</span>
-              <select id="msg-target" style="flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--bright);font-family:var(--mono);font-size:11px;padding:5px 7px;border-radius:3px;outline:none">
+              <span style="font-size:11px;font-family:var(--mono);color:var(--dim);white-space:nowrap;letter-spacing:1px">TO</span>
+              <select id="msg-target" style="flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--bright);font-family:var(--mono);font-size:13px;padding:5px 7px;border-radius:8px;outline:none">
                 <option value="all">Everyone (Public)</option>
                 <option value="server">Server (Private)</option>
               </select>
@@ -792,16 +756,12 @@
         <!-- stats footer -->
         <div id="stats-bar" style="border-left:1px solid var(--border)">
           <div class="sc">
-            <div class="sc-lbl">Power</div>
+            <div class="sc-lbl">Power Total</div>
             <div class="sc-val" id="st-pwr">0 W</div>
           </div>
           <div class="sc">
             <div class="sc-lbl">CO₂ Total</div>
             <div class="sc-val" id="st-co2">0.000 g</div>
-          </div>
-          <div class="sc">
-            <div class="sc-lbl">Processes</div>
-            <div class="sc-val" id="st-proc">0</div>
           </div>
         </div>
 
@@ -819,11 +779,11 @@
 
   let ws       = null;  // active WebSocket connection
   let myCid    = null;  // this client's ID, set from the setup overlay
-  let wsUrl    = 'ws://127.0.0.1:9999';
+  let wsUrl    = 'ws://10.119.76.144:9999';
   let myProcs  = [];     // latest process list for this client
   let myHw     = [];     // latest hardware info for this client
-  let filterQ  = '';     // current process-table search filter
   let totalCo2 = 0;      // running total of CO2 emitted (grams)
+  let totalPower = 0;    // running total of power drawn (watts, summed per update)
 
 
   /* ════════════════════════════════════════════════════════════════════
@@ -929,11 +889,13 @@
         if (msg.cid !== myCid) break;
 
         totalCo2 += (msg.snapshot?.emission || 0);
+        totalPower += (msg.snapshot?.power || 0);
         myProcs = msg.snapshot?.processes || [];
 
         updateGauges(msg.snapshot);
         renderProcessTable();
         document.getElementById('st-co2').textContent = totalCo2.toFixed(3) + ' g';
+        document.getElementById('st-pwr').textContent = totalPower.toFixed(0) + ' W';
         break;
 
       case 'system':
@@ -984,12 +946,6 @@
     setGauge('g-gpu', 'v-gpu', gpu, gpu + '%');
     setGauge('g-pwr', 'v-pwr', (power / 200) * 100, power + 'W');
     setGauge('g-co2', 'v-co2', Math.min((emission / 0.05) * 100, 100), emission.toFixed(3) + 'g');
-
-    document.getElementById('tb-cpu').textContent = cpu + '%';
-    document.getElementById('tb-ram').textContent = ram + '%';
-    document.getElementById('tb-gpu').textContent = gpu + '%';
-    document.getElementById('tb-pwr').textContent = power + ' W';
-    document.getElementById('st-pwr').textContent = power + ' W';
   }
 
 
@@ -997,29 +953,17 @@
      PROCESS TABLE
      ════════════════════════════════════════════════════════════════════ */
 
-  document.getElementById('proc-search').addEventListener('input', e => {
-    filterQ = e.target.value.toLowerCase();
-    renderProcessTable();
-  });
-
   function renderProcessTable() {
-    const filtered = filterQ
-      ? myProcs.filter(p =>
-          p.name.toLowerCase().includes(filterQ) || String(p.pid).includes(filterQ)
-        )
-      : myProcs;
-
     const tbody = document.getElementById('proc-body');
     const table = document.getElementById('proc-tbl');
     const empty = document.getElementById('proc-empty');
 
-    document.getElementById('proc-cnt').textContent = filtered.length;
-    document.getElementById('st-proc').textContent = myProcs.length;
+    document.getElementById('proc-cnt').textContent = myProcs.length;
 
-    if (!filtered.length) {
+    if (!myProcs.length) {
       table.style.display = 'none';
       empty.style.display = 'block';
-      empty.textContent = filterQ ? 'No matching processes' : 'Waiting for data…';
+      empty.textContent = 'Waiting for data…';
       return;
     }
 
@@ -1027,7 +971,7 @@
     empty.style.display = 'none';
     tbody.innerHTML = '';
 
-    filtered.forEach(process => {
+    myProcs.forEach(process => {
       const row = document.createElement('tr');
       row.innerHTML = `<td class="pid">${process.pid}</td><td class="pname">${escapeHtml(process.name)}</td>`;
       tbody.appendChild(row);
@@ -1090,7 +1034,7 @@
     const div = document.createElement('div');
     div.className = 'cm';
     div.innerHTML =
-      `<span class="cm-from ${isPrivate ? 'cm-priv' : ''}" style="color:${msg.color || '#b8c4d8'};${isSelf ? 'font-style:italic' : ''}">` +
+      `<span class="cm-from ${isPrivate ? 'cm-priv' : ''}" style="color:${msg.color || '#43483C'};${isSelf ? 'font-style:italic' : ''}">` +
         `${isPrivate ? '🔒 ' : ''}${fromLabel}${toLabel}` +
       `</span>` +
       `<span class="cm-time">${msg.ts || ''}</span><br>` +
@@ -1152,7 +1096,7 @@
         from: String(myCid),
         text,
         ts: new Date().toTimeString().slice(0, 8),
-        color: '#4D9EFF',
+        color: '#4A85D1',
         self: true,
       });
     } else {
@@ -1166,7 +1110,7 @@
         to: toLabel,
         text,
         ts: new Date().toTimeString().slice(0, 8),
-        color: '#CC5DE8',
+        color: '#8874CE',
         private: true,
         self: true,
       });
